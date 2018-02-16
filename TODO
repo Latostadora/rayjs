@@ -1,0 +1,8 @@
+List of todo items:
+
+* Singleton
+* Bundle all files
+* Minimize
+* Run Ray on HTML that doesn't exists on DOM Load (AJAX, for example)
+* Change action to component (naming)
+* Errors?

@@ -93,8 +93,8 @@ describe("ray JS lib", function() {
         fixture.add(INITIAL_HTML);
 
         fireDOMReady();
-        expect(fixture.isEqual(EXPECTED_HTML)).toBeTruthy();
 
+        expect(fixture.isEqual(EXPECTED_HTML)).toBeTruthy();
     });
 
 
