@@ -6,3 +6,6 @@ List of todo items:
 * Run Ray on HTML that doesn't exists on DOM Load (AJAX, for example)
 * Change action to component (naming)
 * Errors?
+
+* Ensure that actions are instances, not only call to functions
+* Test with class example
