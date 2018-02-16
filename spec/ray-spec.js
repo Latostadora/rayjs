@@ -97,7 +97,45 @@ describe("ray JS lib", function() {
         expect(fixture.isEqual(EXPECTED_HTML)).toBeTruthy();
     });
 
+    it("should ensure that actions are instances, not function calls", function(done) {
+        var INITIAL_HTML=function(){/*
+         <img data-ray-action="ChangeImageSrcAction" src="images/test1.jpg">
+         */};
 
+        window.ChangeImageSrcAction=function() {
+            expect(this instanceof ChangeImageSrcAction).toBeTruthy();
+            done();
+        };
+
+        fixture.add(INITIAL_HTML);
+
+        fireDOMReady();
+    });
+
+    it("should execute a class Action", function() {
+        var INITIAL_HTML=function(){/*
+         <img data-ray-action="ChangeImageSrcAction" src="images/test1.jpg">
+         */};
+        var EXPECTED_HTML=function(){/*
+         <img data-ray-action="ChangeImageSrcAction" src="images/test2.jpg">
+         */};
+
+        var ChangeImageSrcAction=function(image) {
+            this.image=image;
+            this._changeSrc();
+        };
+
+        ChangeImageSrcAction.prototype._changeSrc=function() {
+            this.image.setAttribute("src","images/test2.jpg");
+        };
+        window.ChangeImageSrcAction=ChangeImageSrcAction;
+
+        fixture.add(INITIAL_HTML);
+
+        fireDOMReady();
+
+        expect(fixture.isEqual(EXPECTED_HTML)).toBeTruthy();
+    });
 
 
 });

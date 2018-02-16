@@ -7,7 +7,7 @@ var Ray=function()
         var actionName=self.getActionName(dataRayAction);
         var ctxObject = self.getLastCallableObject(dataRayAction);
         var action=ctxObject[actionName];
-        action(domElement);
+        new action(domElement);
     });
 };
 
