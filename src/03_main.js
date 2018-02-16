@@ -1,4 +1,4 @@
-var raydocument=new RayDocument();
+var raydocument=new Ray.Document();
 raydocument.ready(function(){
-    new Ray();
+    new Ray.Watcher();
 });

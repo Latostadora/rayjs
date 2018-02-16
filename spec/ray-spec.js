@@ -30,7 +30,7 @@ describe("ray JS lib", function() {
 
         fixture.add(INITIAL_HTML);
 
-        new Ray();
+        fireDOMReady();
 
         expect(fixture.isEqual(EXPECTED_HTML)).toBeTruthy();
 
@@ -78,7 +78,7 @@ describe("ray JS lib", function() {
         expect(fixture.isEqual(EXPECTED_HTML)).toBeTruthy();
     });
 
-    it("should exec Ray() when DOM is ready", function() {
+    it("should exec Ray when DOM is ready", function() {
         var INITIAL_HTML=function(){/*
          <img data-ray-action="ChangeImageSrcAction" src="images/test1.jpg">
          */};
