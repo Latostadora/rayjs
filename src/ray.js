@@ -26,3 +26,5 @@ Ray.prototype.getLastCallableObject=function(dataRayAction) {
     });
     return obj;
 };
+
+
