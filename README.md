@@ -9,6 +9,7 @@
 1. [Requirements](#requirements)
 2. [Installation](#installation)
 3. [An overview](#an-overview)
+4. [More examples](#more-examples)
 
 ## Requirements
 
@@ -18,11 +19,13 @@ None
 
 Just download [ray.js](https://raw.githubusercontent.com/josecgil/rayjs/master/dist/ray.js)
 
+or use this:
+
 ```<script type="text/javascript" src="https://raw.githubusercontent.com/josecgil/rayjs/master/dist/ray.js"></script>```
 
 ## An overview
 
-When de DOM is ready `Ray.js` checks the DOM for elements with the `data-ray-component` and executes the js that indicates the value of this attribute.
+When de DOM is ready `Ray.js` checks the DOM for elements with the `data-ray-component` attribute and executes the js that indicates the value of this attribute.
 
 Example:
 
@@ -40,5 +43,6 @@ the JS part of this component changes the src when it's executed:
     };
 ```
 
+## More examples
 
-
+You can check more complex examples in the [samples directory](https://github.com/josecgil/rayjs/tree/master/samples)
