@@ -16,15 +16,15 @@ describe("ray JS lib", function() {
         fixture.destroy();
     });
 
-    it("should instantiate an Action from a data-ray-action attrib", function() {
+    it("should instantiate a Component from a data-ray-component attrib", function() {
         var INITIAL_HTML=function(){/*
-            <img data-ray-action="ChangeImageSrcAction" src="images/test1.jpg">
+            <img data-ray-component="ChangeImageSrcComponent" src="images/test1.jpg">
         */};
         var EXPECTED_HTML=function(){/*
-            <img data-ray-action="ChangeImageSrcAction" src="images/test2.jpg">
+            <img data-ray-component="ChangeImageSrcComponent" src="images/test2.jpg">
          */};
 
-        window.ChangeImageSrcAction=function(image) {
+        window.ChangeImageSrcComponent=function(image) {
             image.setAttribute("src","images/test2.jpg");
         };
 
@@ -38,14 +38,14 @@ describe("ray JS lib", function() {
 
     it("should work with 1 namespace", function() {
         var INITIAL_HTML=function(){/*
-         <img data-ray-action="Namespace.ChangeImageSrcAction" src="images/test1.jpg">
+         <img data-ray-component="Namespace.ChangeImageSrcComponent" src="images/test1.jpg">
          */};
         var EXPECTED_HTML=function(){/*
-         <img data-ray-action="Namespace.ChangeImageSrcAction" src="images/test2.jpg">
+         <img data-ray-component="Namespace.ChangeImageSrcComponent" src="images/test2.jpg">
          */};
 
         window.Namespace={};
-        window.Namespace.ChangeImageSrcAction=function(image) {
+        window.Namespace.ChangeImageSrcComponent=function(image) {
             image.setAttribute("src","images/test2.jpg");
         };
 
@@ -58,16 +58,16 @@ describe("ray JS lib", function() {
 
     it("should work with 3 namespace", function() {
         var INITIAL_HTML=function(){/*
-         <img data-ray-action="NS1.NS2.NS3.ChangeImageSrcAction" src="images/test1.jpg">
+         <img data-ray-component="NS1.NS2.NS3.ChangeImageSrcComponent" src="images/test1.jpg">
          */};
         var EXPECTED_HTML=function(){/*
-         <img data-ray-action="NS1.NS2.NS3.ChangeImageSrcAction" src="images/test2.jpg">
+         <img data-ray-component="NS1.NS2.NS3.ChangeImageSrcComponent" src="images/test2.jpg">
          */};
 
         window.NS1={};
         window.NS1.NS2={};
         window.NS1.NS2.NS3={};
-        window.NS1.NS2.NS3.ChangeImageSrcAction=function(image) {
+        window.NS1.NS2.NS3.ChangeImageSrcComponent=function(image) {
             image.setAttribute("src","images/test2.jpg");
         };
 
@@ -80,13 +80,13 @@ describe("ray JS lib", function() {
 
     it("should exec Ray when DOM is ready", function() {
         var INITIAL_HTML=function(){/*
-         <img data-ray-action="ChangeImageSrcAction" src="images/test1.jpg">
+         <img data-ray-component="ChangeImageSrcComponent" src="images/test1.jpg">
          */};
         var EXPECTED_HTML=function(){/*
-         <img data-ray-action="ChangeImageSrcAction" src="images/test2.jpg">
+         <img data-ray-component="ChangeImageSrcComponent" src="images/test2.jpg">
          */};
 
-        window.ChangeImageSrcAction=function(image) {
+        window.ChangeImageSrcComponent=function(image) {
             image.setAttribute("src","images/test2.jpg");
         };
 
@@ -97,13 +97,13 @@ describe("ray JS lib", function() {
         expect(fixture.isEqual(EXPECTED_HTML)).toBeTruthy();
     });
 
-    it("should ensure that actions are instances, not function calls", function(done) {
+    it("should ensure that components are instances, not function calls", function(done) {
         var INITIAL_HTML=function(){/*
-         <img data-ray-action="ChangeImageSrcAction" src="images/test1.jpg">
+         <img data-ray-component="ChangeImageSrcComponent" src="images/test1.jpg">
          */};
 
-        window.ChangeImageSrcAction=function() {
-            expect(this instanceof ChangeImageSrcAction).toBeTruthy();
+        window.ChangeImageSrcComponent=function() {
+            expect(this instanceof ChangeImageSrcComponent).toBeTruthy();
             done();
         };
 
@@ -112,23 +112,23 @@ describe("ray JS lib", function() {
         fireDOMReady();
     });
 
-    it("should execute a class Action", function() {
+    it("should execute a class Component", function() {
         var INITIAL_HTML=function(){/*
-         <img data-ray-action="ChangeImageSrcAction" src="images/test1.jpg">
+         <img data-ray-component="ChangeImageSrcComponent" src="images/test1.jpg">
          */};
         var EXPECTED_HTML=function(){/*
-         <img data-ray-action="ChangeImageSrcAction" src="images/test2.jpg">
+         <img data-ray-component="ChangeImageSrcComponent" src="images/test2.jpg">
          */};
 
-        var ChangeImageSrcAction=function(image) {
+        var ChangeImageSrcComponent=function(image) {
             this.image=image;
             this._changeSrc();
         };
 
-        ChangeImageSrcAction.prototype._changeSrc=function() {
+        ChangeImageSrcComponent.prototype._changeSrc=function() {
             this.image.setAttribute("src","images/test2.jpg");
         };
-        window.ChangeImageSrcAction=ChangeImageSrcAction;
+        window.ChangeImageSrcComponent=ChangeImageSrcComponent;
 
         fixture.add(INITIAL_HTML);
 

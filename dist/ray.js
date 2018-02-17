@@ -61,22 +61,23 @@
     {
         var self=this;
 
-        document.querySelectorAll("[data-ray-action]").forEach(function(domElement){
-            var dataRayAction=domElement.getAttribute("data-ray-action");
-            var actionName=self.getActionName(dataRayAction);
-            var ctxObject = self.getLastCallableObject(dataRayAction);
-            var action=ctxObject[actionName];
-            new action(domElement);
+        var DATA_RAY_ATTR= "data-ray-component";
+        document.querySelectorAll("["+DATA_RAY_ATTR+"]").forEach(function(domElement){
+            var dataRayComponentAttrValue=domElement.getAttribute(DATA_RAY_ATTR);
+            var componentName=self.getComponentName(dataRayComponentAttrValue);
+            var lastNamespaceObject = self.getLastCallableObject(dataRayComponentAttrValue);
+            var component=lastNamespaceObject[componentName];
+            new component(domElement);
         });
     };
 
-    Watcher.prototype.getActionName=function(dataRayAction) {
-        var namespaces = dataRayAction.split(".");
+    Watcher.prototype.getComponentName=function(dataRayComponent) {
+        var namespaces = dataRayComponent.split(".");
         return namespaces.pop();
     };
 
-    Watcher.prototype.getLastCallableObject=function(dataRayAction) {
-        var namespaces = dataRayAction.split(".");
+    Watcher.prototype.getLastCallableObject=function(dataRayComponent) {
+        var namespaces = dataRayComponent.split(".");
         namespaces.pop();
 
         var obj=window;

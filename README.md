@@ -26,16 +26,16 @@ When de DOM is ready `Ray.js` checks the DOM for elements with the `data-ray-com
 
 Example:
 
-Let's suppose we have this html (note the `data-ray-action` attribute)
+Let's suppose we have this html (note the `data-ray-component` attribute)
 
 ```
-    <img data-ray-action="ChangeImageSrcAction" src="images/test1.jpg">
+    <img data-ray-component="ChangeImageSrcComponent" src="images/test1.jpg">
 ```
 
 the JS part of this component changes the src when it's executed:
 
 ```
-    window.ChangeImageSrcAction=function(image) {
+    window.ChangeImageSrcComponent=function(image) {
         image.setAttribute("src","images/test2.jpg");
     };
 ```
