@@ -13,7 +13,8 @@
 
 ## Requirements
 
-None
+Install node uglify for Compress javascript
+npm install uglify-js -g
 
 ## Installation
 
@@ -21,7 +22,7 @@ Just download [ray.js](https://raw.githubusercontent.com/josecgil/rayjs/master/d
 
 or use this:
 
-```<script type="text/javascript" src="https://raw.githubusercontent.com/josecgil/rayjs/master/dist/ray.js"></script>```
+```<script type="text/javascript" src="https://raw.githubusercontent.com/josecgil/rayjs/master/dist/ray-min.js"></script>```
 
 ## An overview
 
