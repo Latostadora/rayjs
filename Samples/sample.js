@@ -13,7 +13,7 @@ var CountryStatesSelectorComponent=function(divComponent){
 
 CountryStatesSelectorComponent.prototype._changeStateVisibility= function(selectedCountry, selectState){
     if (selectedCountry.value==="US") {
-        selectState.style.display="block";
+        selectState.style.display="inline";
     } else{
         selectState.style.display="none";
     }

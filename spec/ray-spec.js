@@ -137,5 +137,15 @@ describe("ray JS lib", function() {
         expect(fixture.isEqual(EXPECTED_HTML)).toBeTruthy();
     });
 
+    it("should by apply Singleton Pattern ", function(done) {
+
+        fireDOMReady();
+        done();
+        var firstRayInstance = Ray.Watcher().getInstance();
+        var secondRayInstance = Ray.Watcher().getInstance();
+
+        expect(firstRayInstance === secondRayInstance).toBeTruthy();
+    });
+
 
 });
