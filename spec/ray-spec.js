@@ -137,7 +137,7 @@ describe("ray JS lib", function() {
         expect(fixture.isEqual(EXPECTED_HTML)).toBeTruthy();
     });
 
-    it("should by apply Singleton Pattern ", function(done) {
+    it('should by apply Singleton Pattern ', function(done) {
 
         fireDOMReady();
         done();
@@ -145,6 +145,23 @@ describe("ray JS lib", function() {
         var secondRayInstance = Ray.Watcher().getInstance();
 
         expect(firstRayInstance === secondRayInstance).toBeTruthy();
+    });
+
+    it('should call component only once', function() {
+
+        window.testCount = 0;
+        var HTML=function(){/*
+         <div data-ray-component="TestComponent">
+         */};
+
+        window.TestComponent=function() {
+            window.testCount++;
+        };
+
+        fixture.add(HTML);
+        fireDOMReady();
+
+        expect(window.testCount === 1).toBeTruthy();
     });
 
 
