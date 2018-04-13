@@ -1,4 +1,14 @@
+/*TODO
+    AJAX
+    Singleton
+*/
+
 describe("ray JS lib", function() {
+
+    /*TODO: Tech Debt: test to check double execution
+        It's not possible to simulate a window load because the browser reloads
+        the page. Maybe Mock the Browser?
+     */
 
     function fireDOMReady() {
         var DOMContentLoaded_event = document.createEvent("Event");
@@ -147,22 +157,6 @@ describe("ray JS lib", function() {
         expect(firstRayInstance === secondRayInstance).toBeTruthy();
     });
 
-    it('should call component only once', function() {
-
-        window.testCount = 0;
-        var HTML=function(){/*
-         <div data-ray-component="TestComponent">
-         */};
-
-        window.TestComponent=function() {
-            window.testCount++;
-        };
-
-        fixture.add(HTML);
-        fireDOMReady();
-
-        expect(window.testCount === 1).toBeTruthy();
-    });
 
 
 });

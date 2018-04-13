@@ -21,7 +21,10 @@
         }
     };
 
+    var _notified=false;
     Document.prototype._notifyReady=function(callbacks) {
+        if (_notified) return;
+        _notified=true;
         callbacks.forEach(function(callback){
             callback();
         });
