@@ -3,11 +3,19 @@
     exports.RayNS=exports.RayNS || {};
 
     var Ray=function(eventsToListen) {
-        eventsToListen=eventsToListen || {document:'DOMContentLoaded', window:'load'};
-        var raydocument=new RayNS.Document(eventsToListen);
-        raydocument.ready(function(){
+        this.eventsToListen=eventsToListen || {document:'DOMContentLoaded', window:'load'};
+        this.raydocument=new RayNS.Document(this.eventsToListen);
+    };
+
+    Ray.prototype.begin=function() {
+        this.raydocument.begin();
+        this.raydocument.ready(function(){
             new RayNS.Watcher();
         });
+    };
+
+    Ray.prototype.end=function() {
+        this.raydocument.end();
     };
 
     exports.RayNS.Ray=Ray;

@@ -22,9 +22,11 @@ describe("ray JS lib", function() {
 
     beforeEach(function() {
         fixture.create();
+        ray.begin();
     });
 
     afterEach(function() {
+        ray.end();
         fixture.destroy();
     });
 

@@ -6,28 +6,38 @@
 
     var Document=function(eventsToListen){
         this.callbacks=[];
+        this.eventsToListen=eventsToListen;
         var self=this;
+        this._notified=false;
 
-        document.addEventListener(eventsToListen.document, function() {
+        this.listener = function () {
             self._notifyReady(self.callbacks);
-        });
-        window.addEventListener(eventsToListen.window, function() {
-            self._notifyReady(self.callbacks);
-        });
+        };
     };
+
+    Document.prototype.begin=function() {
+        document.addEventListener(this.eventsToListen.document, this.listener);
+        window.addEventListener(this.eventsToListen.window, this.listener);
+    };
+
+    Document.prototype.end=function() {
+        this._notified=false;
+        document.removeEventListener(this.eventsToListen.document, this.listener);
+        window.removeEventListener(this.eventsToListen.window, this.listener);
+    };
+
 
     Document.prototype.ready=function(callback) {
-        if (this._documentIsReady()) {
-            callback();
-        } else {
+        //if (this._documentIsReady()) {
+        //    callback();
+        //} else {
             this.callbacks.push(callback);
-        }
+        //}
     };
 
-    var _notified=false;
     Document.prototype._notifyReady=function(callbacks) {
-        if (_notified) return;
-        _notified=true;
+        if (this._notified) return;
+        this._notified=true;
         callbacks.forEach(function(callback){
             callback();
         });
@@ -46,12 +56,6 @@
         return false;
     };
 
-    /*
-     Document.prototype._removeDocumentLoadEventListener=function() {
-        document.removeEventListener('DOMContentLoaded', ?);
-        window.removeEventListener('load', ?);
-     };
-     */
 
     exports.RayNS.Document=Document;
 })(window);
