@@ -1,14 +1,17 @@
 (function(exports) {
 
-    exports.Ray=exports.Ray || {};
+    exports.RayNS=exports.RayNS || {};
 
-    var Document=function(){
+
+
+    var Document=function(eventsToListen){
         this.callbacks=[];
         var self=this;
-        document.addEventListener('DOMContentLoaded', function() {
+
+        document.addEventListener(eventsToListen.document, function() {
             self._notifyReady(self.callbacks);
         });
-        window.addEventListener('load', function() {
+        window.addEventListener(eventsToListen.window, function() {
             self._notifyReady(self.callbacks);
         });
     };
@@ -50,7 +53,7 @@
      };
      */
 
-    exports.Ray.Document=Document;
+    exports.RayNS.Document=Document;
 })(window);
 
 
@@ -58,11 +61,10 @@
 
 (function (exports) {
 
-    exports.Ray=exports.Ray || {};
+    exports.RayNS=exports.RayNS || {};
 
     var Watcher=function()
     {
-        var instance;
 
         function getComponentName(dataRayComponent) {
             var namespaces = dataRayComponent.split(".");
@@ -80,27 +82,31 @@
             return obj;
         }
 
-        function createInstance() {
-            var DATA_RAY_ATTR= "data-ray-component";
-            return document.querySelectorAll("["+DATA_RAY_ATTR+"]").forEach(function(domElement){
-                var dataRayComponentAttrValue=domElement.getAttribute(DATA_RAY_ATTR);
-                var componentName=getComponentName(dataRayComponentAttrValue);
-                var lastNamespaceObject = getLastCallableObject(dataRayComponentAttrValue);
-                var component=lastNamespaceObject[componentName];
-                new component(domElement);
-            });
-        }
+        var DATA_RAY_ATTR= "data-ray-component";
+        return document.querySelectorAll("["+DATA_RAY_ATTR+"]").forEach(function(domElement){
+            var dataRayComponentAttrValue=domElement.getAttribute(DATA_RAY_ATTR);
+            var componentName=getComponentName(dataRayComponentAttrValue);
+            var lastNamespaceObject = getLastCallableObject(dataRayComponentAttrValue);
+            var component=lastNamespaceObject[componentName];
+            new component(domElement);
+        });
 
-        return {
-            getInstance: function () {
-                return instance || (instance = createInstance());
-            }
-        };
     };
 
-    exports.Ray.Watcher=Watcher;
+    exports.RayNS.Watcher=Watcher;
 })(window);
-var raydocument=new Ray.Document();
-raydocument.ready(function(){
-    Ray.Watcher().getInstance();
-});
+(function (exports) {
+
+    exports.RayNS=exports.RayNS || {};
+
+    var Ray=function(eventsToListen) {
+        eventsToListen=eventsToListen || {document:'DOMContentLoaded', window:'load'};
+        var raydocument=new RayNS.Document(eventsToListen);
+        raydocument.ready(function(){
+            new RayNS.Watcher();
+        });
+    };
+
+    exports.RayNS.Ray=Ray;
+})(window);
+new RayNS.Ray();

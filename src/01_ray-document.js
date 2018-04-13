@@ -1,14 +1,17 @@
 (function(exports) {
 
-    exports.Ray=exports.Ray || {};
+    exports.RayNS=exports.RayNS || {};
 
-    var Document=function(){
+
+
+    var Document=function(eventsToListen){
         this.callbacks=[];
         var self=this;
-        document.addEventListener('DOMContentLoaded', function() {
+
+        document.addEventListener(eventsToListen.document, function() {
             self._notifyReady(self.callbacks);
         });
-        window.addEventListener('load', function() {
+        window.addEventListener(eventsToListen.window, function() {
             self._notifyReady(self.callbacks);
         });
     };
@@ -50,7 +53,7 @@
      };
      */
 
-    exports.Ray.Document=Document;
+    exports.RayNS.Document=Document;
 })(window);
 
 

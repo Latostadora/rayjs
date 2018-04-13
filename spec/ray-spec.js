@@ -1,4 +1,4 @@
-/*TODO
+/*  TODO
     AJAX
     Singleton
 */
@@ -12,11 +12,13 @@ describe("ray JS lib", function() {
 
     function fireDOMReady() {
         var DOMContentLoaded_event = document.createEvent("Event");
-        DOMContentLoaded_event.initEvent("DOMContentLoaded", true, true);
+        DOMContentLoaded_event.initEvent("DOMContentLoadedTest", true, true);
         window.document.dispatchEvent(DOMContentLoaded_event);
     }
 
     var fixture=new Spec.HtmlFixture();
+
+    var ray=new RayNS.Ray({document:'DOMContentLoadedTest', window:'loadTest'});
 
     beforeEach(function() {
         fixture.create();
@@ -66,7 +68,7 @@ describe("ray JS lib", function() {
         expect(fixture.isEqual(EXPECTED_HTML)).toBeTruthy();
     });
 
-    it("should work with 3 namespace", function() {
+    it("should work with 3 namespaces", function() {
         var INITIAL_HTML=function(){/*
          <img data-ray-component="NS1.NS2.NS3.ChangeImageSrcComponent" src="images/test1.jpg">
          */};
@@ -147,15 +149,26 @@ describe("ray JS lib", function() {
         expect(fixture.isEqual(EXPECTED_HTML)).toBeTruthy();
     });
 
-    it('should by apply Singleton Pattern ', function(done) {
 
-        fireDOMReady();
-        done();
-        var firstRayInstance = Ray.Watcher().getInstance();
-        var secondRayInstance = Ray.Watcher().getInstance();
 
-        expect(firstRayInstance === secondRayInstance).toBeTruthy();
-    });
+    //it("?", function(done) {
+    //    var INITIAL_HTML="";
+    //    var END_HTML=function(){/*
+    //     <img data-ray-component="ChangeImageSrcComponent" src="images/test1.jpg">
+    //     */};
+    //
+    //    window.ChangeImageSrcComponent=function() {
+    //        expect(this instanceof ChangeImageSrcComponent).toBeTruthy();
+    //        done();
+    //    };
+    //
+    //    fixture.add(INITIAL_HTML);
+    //
+    //
+    //
+    //
+    //    fireDOMReady();
+    //});
 
 
 
