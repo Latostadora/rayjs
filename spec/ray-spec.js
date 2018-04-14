@@ -4,22 +4,19 @@
 
 describe("ray JS lib", function() {
 
-    /*TODO: Tech Debt: test to check double execution
-        It's not possible to simulate a window load because the browser reloads
-        the page. Maybe Mock the Browser?
-     */
     var EVENT_NAMES_IN_TEST = {document: 'DOMContentLoadedTest', window: 'loadTest'};
     var fixture=new Spec.HtmlFixture();
     var ray=new RayNS.Ray(EVENT_NAMES_IN_TEST);
 
-    function fireDOMReady() {
-        var documentLoadEvent = document.createEvent("Event");
-        documentLoadEvent.initEvent(EVENT_NAMES_IN_TEST.document, true, true);
-        window.document.dispatchEvent(documentLoadEvent);
+    function createEvent(name) {
+        var event = document.createEvent("Event");
+        event.initEvent(name, true, true);
+        return event;
+    }
 
-        var windowLoadEvent = document.createEvent("Event");
-        windowLoadEvent.initEvent(EVENT_NAMES_IN_TEST.window, true, true);
-        window.dispatchEvent(windowLoadEvent);
+    function fireDOMReady() {
+        window.document.dispatchEvent(createEvent(EVENT_NAMES_IN_TEST.document));
+        window.dispatchEvent(createEvent(EVENT_NAMES_IN_TEST.window));
     }
 
     beforeEach(function() {
@@ -28,8 +25,8 @@ describe("ray JS lib", function() {
     });
 
     afterEach(function() {
-        ray.end();
         fixture.destroy();
+        ray.end();
     });
 
     it("should instantiate a Component from a data-ray-component attrib", function() {
@@ -153,6 +150,27 @@ describe("ray JS lib", function() {
         expect(fixture.isEqual(EXPECTED_HTML)).toBeTruthy();
     });
 
+    it("should not exec Ray twice on load", function(done) {
+        var INITIAL_HTML=function(){/*
+         <img data-ray-component="SampleComponent" />
+         */};
+
+        var executionCounter=0;
+        var SampleComponent=function() {
+            executionCounter++;
+        };
+
+        window.SampleComponent=SampleComponent;
+
+        fixture.add(INITIAL_HTML);
+
+        fireDOMReady();
+
+        setTimeout(function(){
+            expect(executionCounter).toBe(1);
+            done();
+        },10);
+    });
 
 
     //it("?", function(done) {

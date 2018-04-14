@@ -2,8 +2,6 @@
 
     exports.RayNS=exports.RayNS || {};
 
-
-
     var Document=function(eventsToListen){
         this.callbacks=[];
         this.eventNamesToListen=eventsToListen;
@@ -13,6 +11,7 @@
         this.listener = function () {
             self._notifyReady(self.callbacks);
         };
+
     };
 
     Document.prototype.begin=function() {
@@ -24,6 +23,7 @@
         this._notified=false;
         document.removeEventListener(this.eventNamesToListen.document, this.listener);
         window.removeEventListener(this.eventNamesToListen.window, this.listener);
+        this.callbacks=[];
     };
 
 
