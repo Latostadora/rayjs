@@ -6,7 +6,7 @@
 
     var Document=function(eventsToListen){
         this.callbacks=[];
-        this.eventsToListen=eventsToListen;
+        this.eventNamesToListen=eventsToListen;
         var self=this;
         this._notified=false;
 
@@ -16,14 +16,14 @@
     };
 
     Document.prototype.begin=function() {
-        document.addEventListener(this.eventsToListen.document, this.listener);
-        window.addEventListener(this.eventsToListen.window, this.listener);
+        document.addEventListener(this.eventNamesToListen.document, this.listener);
+        window.addEventListener(this.eventNamesToListen.window, this.listener);
     };
 
     Document.prototype.end=function() {
         this._notified=false;
-        document.removeEventListener(this.eventsToListen.document, this.listener);
-        window.removeEventListener(this.eventsToListen.window, this.listener);
+        document.removeEventListener(this.eventNamesToListen.document, this.listener);
+        window.removeEventListener(this.eventNamesToListen.window, this.listener);
     };
 
 

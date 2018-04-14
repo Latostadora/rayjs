@@ -1,6 +1,5 @@
 /*  TODO
     AJAX
-    Singleton
 */
 
 describe("ray JS lib", function() {
@@ -9,16 +8,19 @@ describe("ray JS lib", function() {
         It's not possible to simulate a window load because the browser reloads
         the page. Maybe Mock the Browser?
      */
+    var EVENT_NAMES_IN_TEST = {document: 'DOMContentLoadedTest', window: 'loadTest'};
+    var fixture=new Spec.HtmlFixture();
+    var ray=new RayNS.Ray(EVENT_NAMES_IN_TEST);
 
     function fireDOMReady() {
-        var DOMContentLoaded_event = document.createEvent("Event");
-        DOMContentLoaded_event.initEvent("DOMContentLoadedTest", true, true);
-        window.document.dispatchEvent(DOMContentLoaded_event);
+        var documentLoadEvent = document.createEvent("Event");
+        documentLoadEvent.initEvent(EVENT_NAMES_IN_TEST.document, true, true);
+        window.document.dispatchEvent(documentLoadEvent);
+
+        var windowLoadEvent = document.createEvent("Event");
+        windowLoadEvent.initEvent(EVENT_NAMES_IN_TEST.window, true, true);
+        window.dispatchEvent(windowLoadEvent);
     }
-
-    var fixture=new Spec.HtmlFixture();
-
-    var ray=new RayNS.Ray({document:'DOMContentLoadedTest', window:'loadTest'});
 
     beforeEach(function() {
         fixture.create();
@@ -126,7 +128,7 @@ describe("ray JS lib", function() {
         fireDOMReady();
     });
 
-    it("should execute a class Component", function() {
+    it("should execute a class method", function() {
         var INITIAL_HTML=function(){/*
          <img data-ray-component="ChangeImageSrcComponent" src="images/test1.jpg">
          */};

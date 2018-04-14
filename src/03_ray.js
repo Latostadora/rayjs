@@ -2,9 +2,9 @@
 
     exports.RayNS=exports.RayNS || {};
 
-    var Ray=function(eventsToListen) {
-        this.eventsToListen=eventsToListen || {document:'DOMContentLoaded', window:'load'};
-        this.raydocument=new RayNS.Document(this.eventsToListen);
+    var Ray=function(eventNamesToListen) {
+        this.eventNamesToListen=eventNamesToListen || {document:'DOMContentLoaded', window:'load'};
+        this.raydocument=new RayNS.Document(this.eventNamesToListen);
     };
 
     Ray.prototype.begin=function() {
