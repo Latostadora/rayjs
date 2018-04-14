@@ -54,7 +54,7 @@
         }
         return false;
     };
-    
+
     exports.RayNS.Document=Document;
 })(window);
 
