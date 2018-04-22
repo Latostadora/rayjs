@@ -2,7 +2,7 @@
 
 var PubSub=function() {
     this.topics = {};
-    this.Id = 0;
+    this.id = 0;
 };
 
 PubSub.prototype.subscribe = function(topic, callback) {
@@ -10,16 +10,27 @@ PubSub.prototype.subscribe = function(topic, callback) {
         this.topics[topic] = [];
     }
     this.id++;
-    var token = this.Id.toString();
     this.topics[topic].push({
-        token: token,
+        id: this.id,
         callback: callback
     });
-    return token;
+    return this.id;
 };
 
-PubSub.prototype.unsubscribe = function(token) {
+PubSub.prototype.unsubscribe = function(id) {
     for (var m in this.topics) {
+        if (!this.topics[m]) return false;
+        for (var i = 0, len = this.topics[m].length; i < len; i++) {
+            if (this.topics[m][i].id === id) {
+                this.topics[m].splice(i, 1);
+                return true;
+            }
+        }
+    }
+    return false;
+
+
+/*    for (var m in this.topics) {
         if (!this.topics[m]) return false;
         for (var i = 0, j = this.topics[m].length; i < j; i++) {
             if (this.topics[m][i].token === token) {
@@ -28,7 +39,7 @@ PubSub.prototype.unsubscribe = function(token) {
             }
         }
     }
-    return false;
+    return false;*/
 };
 
 PubSub.prototype.publish = function(topic, args) {

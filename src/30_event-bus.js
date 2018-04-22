@@ -11,10 +11,14 @@
     };
 
     EventBus.prototype.on = function (eventName, callback) {
-        this.pubSub.subscribe(eventName, function (eventName, eventData ) {
+        return this.pubSub.subscribe(eventName, function (eventName, eventData ) {
             callback(eventData);
             return null;
         });
+    };
+
+    EventBus.prototype.off = function (id) {
+        this.pubSub.unsubscribe(id);
     };
 
     exports.RayNS.EventBus=EventBus;

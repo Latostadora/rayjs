@@ -195,17 +195,18 @@ describe("ray JS lib", function() {
 
     });
 
-    it("should throw and listen to an event via EventBus", function(done) {
+    it("should listen to an event", function(done) {
         var INITIAL_HTML=function(){/*
          <img data-ray-component="SampleComponent" />
          */};
 
         var SampleComponent=function(data) {
-            data.bus.on("sampleEvent", function(data) {
+            var SAMPLE_EVENT = "sampleEvent";
+            data.bus.on(SAMPLE_EVENT, function(data) {
                 expect(data).not.toBeNull();
                 done();
             });
-            data.bus.trigger("sampleEvent");
+            data.bus.trigger(SAMPLE_EVENT);
         };
 
         window.SampleComponent=SampleComponent;
@@ -216,7 +217,34 @@ describe("ray JS lib", function() {
 
     });
 
-    it("should pass a payload on an event via EventBus", function(done) {
+    it("should remove a subscription to an event", function(done) {
+        var INITIAL_HTML=function(){/*
+         <img data-ray-component="SampleComponent" />
+         */};
+
+        var SampleComponent=function(data) {
+            var bus = data.bus;
+            var SAMPLE_EVENT = "sampleEvent";
+
+            var subscriptionId=bus.on(SAMPLE_EVENT, function() {
+                fail("It should not fire an unregistered event")
+            });
+            bus.off(subscriptionId);
+            bus.trigger(SAMPLE_EVENT);
+            setTimeout(function(){
+                done();
+            }, 10);
+        };
+
+        window.SampleComponent=SampleComponent;
+
+        fixture.add(INITIAL_HTML);
+
+        fireDOMReady();
+
+    });
+
+    it("should pass a payload on an event", function(done) {
         var INITIAL_HTML=function(){/*
          <img data-ray-component="SampleComponent" />
          */};
@@ -224,13 +252,14 @@ describe("ray JS lib", function() {
         var SampleComponent=function(data) {
 
             var SAMPLE_PLAYLOAD = {aNumber: 1, aString: "fizzBuzz"};
+            var SAMPLE_EVENT = "sampleEvent";
 
-            data.bus.on("sampleEvent", function(eventPayload) {
+            data.bus.on(SAMPLE_EVENT, function(eventPayload) {
                 expect(eventPayload.aNumber).toBe(SAMPLE_PLAYLOAD.aNumber);
                 expect(eventPayload.aString).toBe(SAMPLE_PLAYLOAD.aString);
                 done();
             });
-            data.bus.trigger("sampleEvent", SAMPLE_PLAYLOAD);
+            data.bus.trigger(SAMPLE_EVENT, SAMPLE_PLAYLOAD);
         };
 
         window.SampleComponent=SampleComponent;
