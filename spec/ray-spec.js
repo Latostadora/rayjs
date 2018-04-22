@@ -217,6 +217,72 @@ describe("ray JS lib", function() {
 
     });
 
+    it("should listen to N events", function(done) {
+        var INITIAL_HTML=function(){/*
+         <img data-ray-component="SampleComponent" />
+         */};
+
+
+        var SampleComponent=function(data) {
+            var count=0;
+            var SAMPLE_EVENT = "sampleEvent";
+            data.bus.on(SAMPLE_EVENT, function() {
+                count++;
+            });
+            data.bus.on(SAMPLE_EVENT, function() {
+                count++;
+            });
+            data.bus.on(SAMPLE_EVENT, function() {
+                count++;
+            });
+            setTimeout(function(){
+                expect(count).toBe(3);
+                done();
+            }, 10);
+            data.bus.trigger(SAMPLE_EVENT);
+        };
+
+        window.SampleComponent=SampleComponent;
+
+        fixture.add(INITIAL_HTML);
+
+        fireDOMReady();
+
+    });
+
+    it("should call callback function in registered order", function(done) {
+        var INITIAL_HTML=function(){/*
+         <img data-ray-component="SampleComponent" />
+         */};
+
+
+        var SampleComponent=function(data) {
+            var count=0;
+            var SAMPLE_EVENT = "sampleEvent";
+            data.bus.on(SAMPLE_EVENT, function() {
+                count++;
+                expect(count).toBe(1);
+            });
+            data.bus.on(SAMPLE_EVENT, function() {
+                count++;
+                expect(count).toBe(2);
+            });
+            data.bus.on(SAMPLE_EVENT, function() {
+                count++;
+                expect(count).toBe(3);
+                done();
+            });
+            data.bus.trigger(SAMPLE_EVENT);
+        };
+
+        window.SampleComponent=SampleComponent;
+
+        fixture.add(INITIAL_HTML);
+
+        fireDOMReady();
+
+    });
+
     it("should remove a subscription to an event", function(done) {
         var INITIAL_HTML=function(){/*
          <img data-ray-component="SampleComponent" />

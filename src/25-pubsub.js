@@ -44,12 +44,11 @@ PubSub.prototype.publish = function(topic, args) {
     }
     var self=this;
     setTimeout(function() {
-        var subscribers = self.topics[topic],
-            len = subscribers ? subscribers.length : 0;
-
-        while (len--) {
-            subscribers[len].callback(topic, args);
-        }
+        var subscribers = self.topics[topic];
+        if (!subscribers) return;
+        subscribers.forEach(function(suscriber){
+           suscriber.callback(topic, args);
+        });
     }, 0);
     return true;
 };
