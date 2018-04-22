@@ -171,4 +171,69 @@ describe("ray JS lib", function() {
             done();
         },10);
     });
+
+    it("should pass en EventBus to a component constructor", function(done) {
+        var INITIAL_HTML=function(){/*
+         <img data-ray-component="SampleComponent" />
+         */};
+
+        var SampleComponent=function(element, eventBus) {
+            expect(eventBus).not.toBeNull();
+            expect(eventBus instanceof RayNS.EventBus).toBeTruthy();
+            done();
+        };
+
+        window.SampleComponent=SampleComponent;
+
+        fixture.add(INITIAL_HTML);
+
+        fireDOMReady();
+
+    });
+
+    it("should throw and listen to an event via EventBus", function(done) {
+        var INITIAL_HTML=function(){/*
+         <img data-ray-component="SampleComponent" />
+         */};
+
+        var SampleComponent=function(element, eventBus) {
+            eventBus.on("sampleEvent", function() {
+               done();
+            });
+            eventBus.trigger("sampleEvent");
+        };
+
+        window.SampleComponent=SampleComponent;
+
+        fixture.add(INITIAL_HTML);
+
+        fireDOMReady();
+
+    });
+
+    it("should pass a payload on an event via EventBus", function(done) {
+        var INITIAL_HTML=function(){/*
+         <img data-ray-component="SampleComponent" />
+         */};
+
+        var SampleComponent=function(element, eventBus) {
+
+            var SAMPLE_PLAYLOAD = {aNumber: 1, aString: "fizzBuzz"};
+
+            eventBus.on("sampleEvent", function(eventPayload) {
+                expect(eventPayload.aNumber).toBe(SAMPLE_PLAYLOAD.aNumber);
+                expect(eventPayload.aString).toBe(SAMPLE_PLAYLOAD.aString);
+                done();
+            });
+            eventBus.trigger("sampleEvent", SAMPLE_PLAYLOAD);
+        };
+
+        window.SampleComponent=SampleComponent;
+
+        fixture.add(INITIAL_HTML);
+
+        fireDOMReady();
+
+    });
+
 });

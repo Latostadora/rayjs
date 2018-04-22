@@ -2,7 +2,7 @@
 
     exports.RayNS=exports.RayNS || {};
 
-    var Watcher=function()
+    var Watcher=function(eventBus)
     {
 
         function getComponentName(dataRayComponent) {
@@ -27,7 +27,7 @@
             var componentName=getComponentName(dataRayComponentAttrValue);
             var lastNamespaceObject = getLastCallableObject(dataRayComponentAttrValue);
             var component=lastNamespaceObject[componentName];
-            new component(domElement);
+            new component(domElement, eventBus);
         });
 
     };
