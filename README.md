@@ -13,8 +13,9 @@
 
 ## Requirements
 
-Install node uglify for Compress javascript
-npm install uglify-js -g
+Install uglify to minify javascript
+
+```$npm install uglify-js -g```
 
 ## Installation
 
@@ -39,10 +40,25 @@ Let's suppose we have this html (note the `data-ray-component` attribute)
 the JS part of this component changes the src when it's executed:
 
 ```
-    window.ChangeImageSrcComponent=function(image) {
+    window.ChangeImageSrcComponent=function(data) {
+        var image=data.DOMElement;
         image.setAttribute("src","images/test2.jpg");
     };
 ```
+
+## Data object
+
+On every execution an component ```ray.js``` injects a data object containing 2 properties:
+
+* DOMElement: a reference to the DOMElement that triggers the execution of the component
+* bus: a reference to an EventBus
+
+## EventBus
+
+The ```ray.js``` EventBus has two methods:
+
+* ```trigger(eventName, eventPayload)``` triggers an event with the corresponding payload
+* ```on(eventName, callbackFn)``` listen to an event an sets the callback function to be called when the event happens
 
 ## More examples
 

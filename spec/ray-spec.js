@@ -37,7 +37,8 @@ describe("ray JS lib", function() {
             <img data-ray-component="ChangeImageSrcComponent" src="images/test2.jpg">
          */};
 
-        window.ChangeImageSrcComponent=function(image) {
+        window.ChangeImageSrcComponent=function(data) {
+            var image=data.DOMElement;
             image.setAttribute("src","images/test2.jpg");
         };
 
@@ -58,7 +59,8 @@ describe("ray JS lib", function() {
          */};
 
         window.Namespace={};
-        window.Namespace.ChangeImageSrcComponent=function(image) {
+        window.Namespace.ChangeImageSrcComponent=function(data) {
+            var image=data.DOMElement;
             image.setAttribute("src","images/test2.jpg");
         };
 
@@ -80,7 +82,8 @@ describe("ray JS lib", function() {
         window.NS1={};
         window.NS1.NS2={};
         window.NS1.NS2.NS3={};
-        window.NS1.NS2.NS3.ChangeImageSrcComponent=function(image) {
+        window.NS1.NS2.NS3.ChangeImageSrcComponent=function(data) {
+            var image=data.DOMElement;
             image.setAttribute("src","images/test2.jpg");
         };
 
@@ -99,7 +102,8 @@ describe("ray JS lib", function() {
          <img data-ray-component="ChangeImageSrcComponent" src="images/test2.jpg">
          */};
 
-        window.ChangeImageSrcComponent=function(image) {
+        window.ChangeImageSrcComponent=function(data) {
+            var image=data.DOMElement;
             image.setAttribute("src","images/test2.jpg");
         };
 
@@ -133,8 +137,8 @@ describe("ray JS lib", function() {
          <img data-ray-component="ChangeImageSrcComponent" src="images/test2.jpg">
          */};
 
-        var ChangeImageSrcComponent=function(image) {
-            this.image=image;
+        var ChangeImageSrcComponent=function(data) {
+            this.image=data.DOMElement;
             this._changeSrc();
         };
 
@@ -177,9 +181,9 @@ describe("ray JS lib", function() {
          <img data-ray-component="SampleComponent" />
          */};
 
-        var SampleComponent=function(element, eventBus) {
-            expect(eventBus).not.toBeNull();
-            expect(eventBus instanceof RayNS.EventBus).toBeTruthy();
+        var SampleComponent=function(data) {
+            expect(data.bus).not.toBeNull();
+            expect(data.bus instanceof RayNS.EventBus).toBeTruthy();
             done();
         };
 
@@ -196,11 +200,12 @@ describe("ray JS lib", function() {
          <img data-ray-component="SampleComponent" />
          */};
 
-        var SampleComponent=function(element, eventBus) {
-            eventBus.on("sampleEvent", function() {
-               done();
+        var SampleComponent=function(data) {
+            data.bus.on("sampleEvent", function(data) {
+                expect(data).not.toBeNull();
+                done();
             });
-            eventBus.trigger("sampleEvent");
+            data.bus.trigger("sampleEvent");
         };
 
         window.SampleComponent=SampleComponent;
@@ -216,16 +221,16 @@ describe("ray JS lib", function() {
          <img data-ray-component="SampleComponent" />
          */};
 
-        var SampleComponent=function(element, eventBus) {
+        var SampleComponent=function(data) {
 
             var SAMPLE_PLAYLOAD = {aNumber: 1, aString: "fizzBuzz"};
 
-            eventBus.on("sampleEvent", function(eventPayload) {
+            data.bus.on("sampleEvent", function(eventPayload) {
                 expect(eventPayload.aNumber).toBe(SAMPLE_PLAYLOAD.aNumber);
                 expect(eventPayload.aString).toBe(SAMPLE_PLAYLOAD.aString);
                 done();
             });
-            eventBus.trigger("sampleEvent", SAMPLE_PLAYLOAD);
+            data.bus.trigger("sampleEvent", SAMPLE_PLAYLOAD);
         };
 
         window.SampleComponent=SampleComponent;

@@ -27,7 +27,8 @@
             var componentName=getComponentName(dataRayComponentAttrValue);
             var lastNamespaceObject = getLastCallableObject(dataRayComponentAttrValue);
             var component=lastNamespaceObject[componentName];
-            new component(domElement, eventBus);
+            var data={ DOMElement: domElement, bus: eventBus};
+            new component(data);
         });
 
     };
