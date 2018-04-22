@@ -3,18 +3,20 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
-    <script type="text/javascript" src="../dist/ray-min.js"></script>
-    <script type="text/javascript" src="sample.js"></script>
+    <script type="text/javascript" src="../../dist/ray-min.js"></script>
+    <script type="text/javascript" src="js/Events.js"></script>
+    <script type="text/javascript" src="js/CountryComponent.js"></script>
+    <script type="text/javascript" src="js/StateComponent.js"></script>
 </head>
 <body>
 
-<div data-ray-component="CountryStatesSelectorComponent">
-    <select data-country>
+<div>
+    <select data-ray-component="CountryComponent">
         <option label="Alemania" value="DE" selected="selected">Alemania</option>
         <option label="España" value="ES">España</option>
         <option label="Estados Unidos" value="US" >Estados Unidos</option>
     </select>
-    <select data-state>
+    <select data-ray-component="StateComponent">
         <option label="Alabama" value="AL">Alabama</option>
         <option label="Wisconsin" value="WI">Wisconsin</option>
         <option label="Florida" value="FL" selected="selected">Florida</option>
