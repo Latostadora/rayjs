@@ -232,6 +232,7 @@ describe("ray JS lib", function() {
             bus.off(subscriptionId);
             bus.trigger(SAMPLE_EVENT);
             setTimeout(function(){
+                expect().nothing();
                 done();
             }, 10);
         };
@@ -269,5 +270,35 @@ describe("ray JS lib", function() {
         fireDOMReady();
 
     });
+
+    it("should remove all subscribers on ray.end()", function(done) {
+        var INITIAL_HTML=function(){/*
+         <img data-ray-component="SampleComponent" />
+         */};
+
+        var SampleComponent=function(data) {
+            var bus = data.bus;
+            var SAMPLE_EVENT = "sampleEvent";
+
+            var subscriptionId=bus.on(SAMPLE_EVENT, function() {
+                fail("It should not fire an unregistered event")
+            });
+            ray.end();
+            bus.trigger(SAMPLE_EVENT);
+            setTimeout(function(){
+                expect().nothing();
+                done();
+            }, 10);
+        };
+
+        window.SampleComponent=SampleComponent;
+
+        fixture.add(INITIAL_HTML);
+
+        fireDOMReady();
+
+
+    });
+
 
 });

@@ -21,6 +21,10 @@
         this.pubSub.unsubscribe(id);
     };
 
+    EventBus.prototype.end= function() {
+        this.pubSub.unsubscribeAll();
+    };
+
     exports.RayNS.EventBus=EventBus;
 })(window);
 

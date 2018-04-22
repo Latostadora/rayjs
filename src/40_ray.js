@@ -18,6 +18,7 @@
 
     Ray.prototype.end=function() {
         this.raydocument.end();
+        this.eventBus.end();
     };
 
     exports.RayNS.Ray=Ray;

@@ -1,6 +1,10 @@
 //Adapted from https://gist.github.com/fatihacet/1290216
 
 var PubSub=function() {
+    this.init();
+};
+
+PubSub.prototype.init=function() {
     this.topics = {};
     this.id = 0;
 };
@@ -28,18 +32,10 @@ PubSub.prototype.unsubscribe = function(id) {
         }
     }
     return false;
+};
 
-
-/*    for (var m in this.topics) {
-        if (!this.topics[m]) return false;
-        for (var i = 0, j = this.topics[m].length; i < j; i++) {
-            if (this.topics[m][i].token === token) {
-                this.topics[m].splice(i, 1);
-                return token;
-            }
-        }
-    }
-    return false;*/
+PubSub.prototype.unsubscribeAll = function() {
+    this.init();
 };
 
 PubSub.prototype.publish = function(topic, args) {
