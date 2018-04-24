@@ -123,7 +123,10 @@ if (!Array.prototype.forEach) {
 
     var Watcher=function(eventBus)
     {
+        this.eventBus = eventBus;
+    };
 
+    Watcher.prototype.execute = function() {
         function getComponentName(dataRayComponent) {
             var namespaces = dataRayComponent.split(".");
             return namespaces.pop();
@@ -141,19 +144,26 @@ if (!Array.prototype.forEach) {
         }
 
         var DATA_RAY_ATTR= "data-ray-component";
+        var self = this;
         return document.querySelectorAll("["+DATA_RAY_ATTR+"]").forEach(function(domElement){
+            var EXECUTED_ATTRIBUTE = 'data-ray-component-executed';
+            if (domElement.hasAttribute(EXECUTED_ATTRIBUTE)){
+                return;
+            }
+            domElement.setAttribute(EXECUTED_ATTRIBUTE,'');
             var dataRayComponentAttrValue=domElement.getAttribute(DATA_RAY_ATTR);
             var componentName=getComponentName(dataRayComponentAttrValue);
             var lastNamespaceObject = getLastCallableObject(dataRayComponentAttrValue);
             var component=lastNamespaceObject[componentName];
-            var data={ DOMElement: domElement, bus: eventBus};
+            var data={ DOMElement: domElement, bus: self.eventBus};
             new component(data);
         });
-
     };
 
     exports.RayNS.Watcher=Watcher;
 })(window);
+
+
 //Adapted from https://gist.github.com/fatihacet/1290216
 
 (function (exports) {
@@ -229,10 +239,13 @@ if (!Array.prototype.forEach) {
 
     Ray.prototype.begin=function() {
         this.raydocument.begin();
-        var self=this;
+        var watcher = new RayNS.Watcher(this.eventBus);
         this.raydocument.ready(function(){
-            new RayNS.Watcher(self.eventBus);
+            watcher.execute();
         });
+        setInterval(function(){
+            watcher.execute();
+        },400);
     };
 
     Ray.prototype.end=function() {

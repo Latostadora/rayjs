@@ -10,10 +10,13 @@
 
     Ray.prototype.begin=function() {
         this.raydocument.begin();
-        var self=this;
+        var watcher = new RayNS.Watcher(this.eventBus);
         this.raydocument.ready(function(){
-            new RayNS.Watcher(self.eventBus);
+            watcher.execute();
         });
+        setInterval(function(){
+            watcher.execute();
+        },400);
     };
 
     Ray.prototype.end=function() {
