@@ -121,12 +121,12 @@ if (!Array.prototype.forEach) {
 
     exports.RayNS=exports.RayNS || {};
 
-    var Watcher=function(eventBus)
+    var CommandDispatcher=function(eventBus)
     {
         this.eventBus = eventBus;
     };
 
-    Watcher.prototype.execute = function() {
+    CommandDispatcher.prototype.loadNewComponents = function() {
         function getComponentName(dataRayComponent) {
             var namespaces = dataRayComponent.split(".");
             return namespaces.pop();
@@ -155,12 +155,12 @@ if (!Array.prototype.forEach) {
             var componentName=getComponentName(dataRayComponentAttrValue);
             var lastNamespaceObject = getLastCallableObject(dataRayComponentAttrValue);
             var component=lastNamespaceObject[componentName];
-            var data={ DOMElement: domElement, bus: self.eventBus};
+            var data={ DOMElement: domElement, bus: self.eventBus, commandDispatcher: self };
             new component(data);
         });
     };
 
-    exports.RayNS.Watcher=Watcher;
+    exports.RayNS.CommandDispatcher=CommandDispatcher;
 })(window);
 
 
@@ -235,22 +235,27 @@ if (!Array.prototype.forEach) {
         this.eventNamesToListen=eventNamesToListen || {document:'DOMContentLoaded', window:'load'};
         this.raydocument=new RayNS.Document(this.eventNamesToListen);
         this.eventBus=new RayNS.EventBus();
+        this.commandDispatcher = new RayNS.CommandDispatcher(this.eventBus);
     };
 
     Ray.prototype.begin=function() {
         this.raydocument.begin();
-        var watcher = new RayNS.Watcher(this.eventBus);
+        var self = this;
         this.raydocument.ready(function(){
-            watcher.execute();
+            self.commandDispatcher.loadNewComponents();
         });
         setInterval(function(){
-            watcher.execute();
+            self.commandDispatcher.loadNewComponents();
         },400);
     };
 
     Ray.prototype.end=function() {
         this.raydocument.end();
         this.eventBus.end();
+    };
+
+    Ray.prototype.getCommandDispatcher=function() {
+        return this.commandDispatcher;
     };
 
     exports.RayNS.Ray=Ray;
