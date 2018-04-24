@@ -34,7 +34,7 @@ describe("ray JS lib", function() {
             <img data-ray-component="ChangeImageSrcComponent" src="images/test1.jpg">
         */};
         var EXPECTED_HTML=function(){/*
-            <img data-ray-component="ChangeImageSrcComponent" src="images/test2.jpg">
+            <img data-ray-component="ChangeImageSrcComponent" src="images/test2.jpg" data-ray-component-executed>
          */};
 
         window.ChangeImageSrcComponent=function(data) {
@@ -55,7 +55,7 @@ describe("ray JS lib", function() {
          <img data-ray-component="Namespace.ChangeImageSrcComponent" src="images/test1.jpg">
          */};
         var EXPECTED_HTML=function(){/*
-         <img data-ray-component="Namespace.ChangeImageSrcComponent" src="images/test2.jpg">
+         <img data-ray-component="Namespace.ChangeImageSrcComponent" src="images/test2.jpg" data-ray-component-executed>
          */};
 
         window.Namespace={};
@@ -76,7 +76,7 @@ describe("ray JS lib", function() {
          <img data-ray-component="NS1.NS2.NS3.ChangeImageSrcComponent" src="images/test1.jpg">
          */};
         var EXPECTED_HTML=function(){/*
-         <img data-ray-component="NS1.NS2.NS3.ChangeImageSrcComponent" src="images/test2.jpg">
+         <img data-ray-component="NS1.NS2.NS3.ChangeImageSrcComponent" src="images/test2.jpg" data-ray-component-executed>
          */};
 
         window.NS1={};
@@ -99,7 +99,7 @@ describe("ray JS lib", function() {
          <img data-ray-component="ChangeImageSrcComponent" src="images/test1.jpg">
          */};
         var EXPECTED_HTML=function(){/*
-         <img data-ray-component="ChangeImageSrcComponent" src="images/test2.jpg">
+         <img data-ray-component="ChangeImageSrcComponent" src="images/test2.jpg" data-ray-component-executed>
          */};
 
         window.ChangeImageSrcComponent=function(data) {
@@ -134,7 +134,7 @@ describe("ray JS lib", function() {
          <img data-ray-component="ChangeImageSrcComponent" src="images/test1.jpg">
          */};
         var EXPECTED_HTML=function(){/*
-         <img data-ray-component="ChangeImageSrcComponent" src="images/test2.jpg">
+         <img data-ray-component="ChangeImageSrcComponent" src="images/test2.jpg" data-ray-component-executed>
          */};
 
         var ChangeImageSrcComponent=function(data) {
@@ -293,7 +293,7 @@ describe("ray JS lib", function() {
             var SAMPLE_EVENT = "sampleEvent";
 
             var subscriptionId=bus.on(SAMPLE_EVENT, function() {
-                fail("It should not fire an unregistered event")
+                fail("It should not fire an unregistered event");
             });
             bus.off(subscriptionId);
             bus.trigger(SAMPLE_EVENT);
@@ -347,7 +347,7 @@ describe("ray JS lib", function() {
             var SAMPLE_EVENT = "sampleEvent";
 
             var subscriptionId=bus.on(SAMPLE_EVENT, function() {
-                fail("It should not fire an unregistered event")
+                fail("It should not fire an unregistered event");
             });
             ray.end();
             bus.trigger(SAMPLE_EVENT);
@@ -366,5 +366,52 @@ describe("ray JS lib", function() {
 
     });
 
+
+    it("should instantiate component after dom is ready", function(done) {
+        var INITIAL_HTML=function(){/*
+            <img data-ray-component="AsyncComponent">
+        */};
+
+        window.AsyncComponent=function() {
+            done();
+        };
+
+        fireDOMReady();
+
+        fixture.add(INITIAL_HTML);
+    });
+
+    it("should instantiate components on changes in DOM after load/ready", function(done) {
+        var INITIAL_HTML=function(){/*
+            <img data-ray-component="SampleComponent">
+        */};
+
+        var AFTER_HTML=function(){/*
+            <img data-ray-component="Sample2Component">
+        */};
+
+        var SampleCount = 0;
+        var Sample2Count = 0;
+
+        window.SampleComponent=function() {
+            SampleCount++;
+        };
+
+        window.Sample2Component=function() {
+            Sample2Count++;
+        };
+
+        fixture.add(INITIAL_HTML);
+
+        fireDOMReady();
+
+        fixture.add(AFTER_HTML);
+
+        setTimeout(function(){
+            expect(SampleCount).toBe(1);
+            expect(Sample2Count).toBe(1);
+            done();
+        }, 1000);
+    });
 
 });
