@@ -2,12 +2,12 @@
 
     exports.RayNS=exports.RayNS || {};
 
-    var Watcher=function(eventBus)
+    var CommandDispatcher=function(eventBus)
     {
         this.eventBus = eventBus;
     };
 
-    Watcher.prototype.execute = function() {
+    CommandDispatcher.prototype.loadNewComponents = function() {
         function getComponentName(dataRayComponent) {
             var namespaces = dataRayComponent.split(".");
             return namespaces.pop();
@@ -36,12 +36,12 @@
             var componentName=getComponentName(dataRayComponentAttrValue);
             var lastNamespaceObject = getLastCallableObject(dataRayComponentAttrValue);
             var component=lastNamespaceObject[componentName];
-            var data={ DOMElement: domElement, bus: self.eventBus};
+            var data={ DOMElement: domElement, bus: self.eventBus, commandDispatcher: self };
             new component(data);
         });
     };
 
-    exports.RayNS.Watcher=Watcher;
+    exports.RayNS.CommandDispatcher=CommandDispatcher;
 })(window);
 
 

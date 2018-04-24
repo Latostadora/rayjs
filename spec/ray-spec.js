@@ -176,7 +176,7 @@ describe("ray JS lib", function() {
         },10);
     });
 
-    it("should pass en EventBus to a component constructor", function(done) {
+    it("should pass an EventBus to a component constructor", function(done) {
         var INITIAL_HTML=function(){/*
          <img data-ray-component="SampleComponent" />
          */};
@@ -411,7 +411,44 @@ describe("ray JS lib", function() {
             expect(SampleCount).toBe(1);
             expect(Sample2Count).toBe(1);
             done();
-        }, 1000);
+        }, 600);
+    });
+
+    it("should instantiate components on demand", function() {
+        var AFTER_HTML=function(){/*
+            <img data-ray-component="SampleComponent">
+        */};
+
+        var SampleCount = 0;
+
+        window.SampleComponent=function() {
+            SampleCount++;
+        };
+
+        fixture.add(AFTER_HTML);
+        ray.getCommandDispatcher().loadNewComponents();
+
+        expect(SampleCount).toBe(1);
+
+    });
+
+    it("should pass a CommandDispatcher to a component constructor", function(done) {
+        var INITIAL_HTML=function(){/*
+         <img data-ray-component="SampleComponent" />
+         */};
+
+        var SampleComponent=function(data) {
+            expect(data.commandDispatcher).not.toBeNull();
+            expect(data.commandDispatcher instanceof RayNS.CommandDispatcher).toBeTruthy();
+            done();
+        };
+
+        window.SampleComponent=SampleComponent;
+
+        fixture.add(INITIAL_HTML);
+
+        fireDOMReady();
+
     });
 
 });
