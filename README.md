@@ -9,7 +9,8 @@
 1. [Requirements](#requirements)
 2. [Installation](#installation)
 3. [An overview](#an-overview)
-4. [More examples](#more-examples)
+4. [Errors](#errors)
+5. [More examples](#more-examples)
 
 ## Requirements
 
@@ -59,6 +60,15 @@ The ```ray.js``` EventBus has two methods:
 
 * ```trigger(eventName, eventPayload)``` triggers an event with the corresponding payload
 * ```on(eventName, callbackFn)``` listen to an event an sets the callback function to be called when the event happens
+
+## Errors
+
+```ray.js``` throws an "ray.error" event on the EventBus if it detects an Error with the Exception as the payload. You can catch the error with this sample code:
+```
+    ray.eventBus.on("ray.error", function(exception) {
+        console.log("Error:"+exception.message);
+    };
+```
 
 ## More examples
 
