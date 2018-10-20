@@ -8,40 +8,18 @@
     };
 
     CommandDispatcher.prototype.loadNewComponents = function() {
-        function getComponentName(dataRayComponent) {
-            var namespaces = dataRayComponent.split(".");
-            return namespaces.pop();
-        }
-
-        function getLastCallableObject(dataRayComponent) {
-            var namespaces = dataRayComponent.split(".");
-            namespaces.pop();
-
-            var obj=window;
-            namespaces.forEach(function(namespace){
-                obj=obj[namespace];
-            });
-            return obj;
-        }
-
-        var DATA_RAY_ATTR= "data-ray-component";
+        var DATA_RAY_ATTR=RayNS.RayFactory.DATA_RAY_ATTR;
         var self = this;
         return document.querySelectorAll("["+DATA_RAY_ATTR+"]").forEach(function(domElement){
             try {
-                var EXECUTED_ATTRIBUTE = 'data-ray-component-executed';
+                var EXECUTED_ATTRIBUTE = RayNS.RayFactory.EXECUTED_ATTRIBUTE;
                 if (domElement.hasAttribute(EXECUTED_ATTRIBUTE)) {
                     return;
                 }
                 domElement.setAttribute(EXECUTED_ATTRIBUTE, '');
-                var dataRayComponentAttrValue = domElement.getAttribute(DATA_RAY_ATTR);
-                var componentName = getComponentName(dataRayComponentAttrValue);
-                var lastNamespaceObject = getLastCallableObject(dataRayComponentAttrValue);
-                var component = lastNamespaceObject[componentName];
-                var data = {DOMElement: domElement, bus: self.eventBus, commandDispatcher: self};
-                if (component==undefined) {
-                    throw new Error("<"+componentName+"> JS object not Found");
-                }
-                new component(data);
+
+                var data=RayNS.RayFactory.createData(domElement, self.eventBus);
+                return RayNS.RayFactory.createComponent(data);
             } catch (e) {
                 self.eventBus.trigger("ray.error", e);
                 console.log("RayJS: Error loading components: "+ e.message);

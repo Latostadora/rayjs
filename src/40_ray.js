@@ -5,7 +5,7 @@
     var Ray=function(eventNamesToListen) {
         this.eventNamesToListen=eventNamesToListen || {document:'DOMContentLoaded', window:'load'};
         this.raydocument=new RayNS.Document(this.eventNamesToListen);
-        this.eventBus=new RayNS.EventBus();
+        this.eventBus=RayNS.RayFactory.createBus();
         this.commandDispatcher = new RayNS.CommandDispatcher(this.eventBus);
     };
 
@@ -15,12 +15,13 @@
         this.raydocument.ready(function(){
             self.commandDispatcher.loadNewComponents();
         });
-        setInterval(function(){
+        this.intervalId=setInterval(function(){
             self.commandDispatcher.loadNewComponents();
         },400);
     };
 
     Ray.prototype.end=function() {
+        clearInterval(this.intervalId);
         this.raydocument.end();
         this.eventBus.end();
     };

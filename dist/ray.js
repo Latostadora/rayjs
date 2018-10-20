@@ -152,15 +152,9 @@ if (!Array.prototype.forEach) {
                     return;
                 }
                 domElement.setAttribute(EXECUTED_ATTRIBUTE, '');
-                var dataRayComponentAttrValue = domElement.getAttribute(DATA_RAY_ATTR);
-                var componentName = getComponentName(dataRayComponentAttrValue);
-                var lastNamespaceObject = getLastCallableObject(dataRayComponentAttrValue);
-                var component = lastNamespaceObject[componentName];
-                var data = {DOMElement: domElement, bus: self.eventBus, commandDispatcher: self};
-                if (component==undefined) {
-                    throw new Error("<"+componentName+"> JS object not Found");
-                }
-                new component(data);
+
+                var data=RayNS.RayFactory.createData(domElement, self.eventBus);
+                return RayNS.RayFactory.createComponent(data);
             } catch (e) {
                 self.eventBus.trigger("ray.error", e);
                 console.log("RayJS: Error loading components: "+ e.message);
@@ -239,10 +233,122 @@ if (!Array.prototype.forEach) {
 
     exports.RayNS=exports.RayNS || {};
 
+    var ComponentInstanceCommand=function(componentObject, data) {
+        this.componentObject=componentObject;
+        this.data=data;
+    };
+
+    ComponentInstanceCommand.prototype.execute=function(){
+        return new this.componentObject(this.data);
+    };
+
+    exports.RayNS.ComponentInstanceCommand=ComponentInstanceCommand;
+})(window);
+
+
+(function(exports) {
+
+    exports.RayNS=exports.RayNS || {};
+
+    var ComponentInstanceCommand=RayNS.ComponentInstanceCommand;
+
+    var RayFactory=function(){
+
+    };
+
+    RayFactory.createBus=function() {
+        return new RayNS.EventBus();
+    };
+
+    RayFactory.createData=function(domElement, bus) {
+        //TODO: quitar commandDispatcher.
+        //TODO: sustituir por un comando que tiramos al bus (ray.refresh)?
+        var data = {
+            DOMElement: domElement,
+            bus: bus,
+            commandDispatcher: null
+        };
+        return data;
+    };
+
+    RayFactory.createComponent=function(data) {
+        function getComponentName(dataRayComponent) {
+            var namespaces = dataRayComponent.split(".");
+            return namespaces.pop();
+        }
+
+        function getLastCallableObject(dataRayComponent) {
+            var namespaces = dataRayComponent.split(".");
+            namespaces.pop();
+
+            var obj=window;
+            namespaces.forEach(function(namespace){
+                obj=obj[namespace];
+            });
+            return obj;
+        }
+
+        var DATA_RAY_ATTR= "data-ray-component";
+
+        var domElement=data.DOMElement;
+
+        var dataRayComponentAttrValue = domElement.getAttribute(DATA_RAY_ATTR);
+        var componentName = getComponentName(dataRayComponentAttrValue);
+        var lastNamespaceObject = getLastCallableObject(dataRayComponentAttrValue);
+        var component = lastNamespaceObject[componentName];
+        if (component==undefined) {
+            throw new Error("<"+componentName+"> JS object not Found");
+        }
+        return new component(data);
+    };
+
+
+    RayFactory.createComponentInstanceCommand=function(domElement, bus) {
+        function getComponentName(dataRayComponent) {
+            var namespaces = dataRayComponent.split(".");
+            return namespaces.pop();
+        }
+
+        function getLastCallableObject(dataRayComponent) {
+            var namespaces = dataRayComponent.split(".");
+            namespaces.pop();
+
+            var obj=window;
+            namespaces.forEach(function(namespace){
+                obj=obj[namespace];
+            });
+            return obj;
+        }
+
+        var DATA_RAY_ATTR= "data-ray-component";
+
+        var data=RayFactory.createData(domElement, bus);
+        
+        var dataRayComponentAttrValue = domElement.getAttribute(DATA_RAY_ATTR);
+        var componentName = getComponentName(dataRayComponentAttrValue);
+        var lastNamespaceObject = getLastCallableObject(dataRayComponentAttrValue);
+        var componentObject = lastNamespaceObject[componentName];
+        if (componentObject==undefined) {
+            throw new Error("<"+componentName+"> JS object not Found");
+        }
+        return new ComponentInstanceCommand(componentObject, data);
+    };
+    
+
+    exports.RayNS.RayFactory=RayFactory;
+})(window);
+
+
+
+
+(function (exports) {
+
+    exports.RayNS=exports.RayNS || {};
+
     var Ray=function(eventNamesToListen) {
         this.eventNamesToListen=eventNamesToListen || {document:'DOMContentLoaded', window:'load'};
         this.raydocument=new RayNS.Document(this.eventNamesToListen);
-        this.eventBus=new RayNS.EventBus();
+        this.eventBus=RayNS.RayFactory.createBus();
         this.commandDispatcher = new RayNS.CommandDispatcher(this.eventBus);
     };
 
@@ -252,12 +358,13 @@ if (!Array.prototype.forEach) {
         this.raydocument.ready(function(){
             self.commandDispatcher.loadNewComponents();
         });
-        setInterval(function(){
+        this.intervalId=setInterval(function(){
             self.commandDispatcher.loadNewComponents();
         },400);
     };
 
     Ray.prototype.end=function() {
+        clearInterval(this.intervalId);
         this.raydocument.end();
         this.eventBus.end();
     };

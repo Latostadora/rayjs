@@ -432,10 +432,11 @@ describe("ray JS lib", function() {
 
     });
 
+/*
     it("should pass a CommandDispatcher to a component constructor", function(done) {
-        var INITIAL_HTML=function(){/*
+        var INITIAL_HTML=function(){/!*
          <img data-ray-component="SampleComponent" />
-         */};
+         *!/};
 
         var SampleComponent=function(data) {
             expect(data.commandDispatcher).not.toBeNull();
@@ -450,6 +451,7 @@ describe("ray JS lib", function() {
         fireDOMReady();
 
     });
+*/
 
     it("should send a 'ray.error' event if component doesn't exists", function(done) {
         var INITIAL_HTML=function(){/*
@@ -464,4 +466,87 @@ describe("ray JS lib", function() {
         fireDOMReady();
     });
 
+    it("must create a new Bus", function() {
+        var INITIAL_HTML=function(){/*
+            <img data-ray-component="NonExistentComponent" />
+        */};
+        fixture.add(INITIAL_HTML);
+
+        var bus = RayNS.RayFactory.createBus();
+
+        expect(bus).not.toBeNull();
+        expect(bus instanceof RayNS.EventBus).toBeTruthy();
+
+
+    });
+
+    it("must create a data from dom & bus", function() {
+        var INITIAL_HTML=function(){/*
+            <img data-ray-component="NonExistentComponent" />
+        */};
+        fixture.add(INITIAL_HTML);
+
+
+        var bus = RayNS.RayFactory.createBus();
+        var fixtureDomElement = fixture.getRootElement();
+        var data = RayNS.RayFactory.createData(fixtureDomElement, bus);
+
+        expect(data).not.toBeNull();
+        expect(data.bus instanceof RayNS.EventBus).toBeTruthy();
+        expect(fixtureDomElement.innerHTML).toBe(data.DOMElement.innerHTML);
+    });
+
+    it("must create a component instance from data", function() {
+        var INITIAL_HTML=function(){/*
+            <img data-ray-component="SampleComponent" />
+        */};
+        fixture.add(INITIAL_HTML);
+
+        window.SampleComponent=function(data) {
+
+        };
+
+        var bus = RayNS.RayFactory.createBus();
+        var imageDomElement = fixture.getRootElement().getElementsByTagName("img")[0];
+        var data = RayNS.RayFactory.createData(imageDomElement, bus);
+
+        var sampleComponentInstance=RayNS.RayFactory.createComponent(data);
+        expect(sampleComponentInstance instanceof SampleComponent).toBeTruthy();
+    });
+
+    it("must create a componentCommand from domElement & bus", function() {
+        var INITIAL_HTML=function(){/*
+            <img data-ray-component="SampleComponent" />
+        */};
+        fixture.add(INITIAL_HTML);
+
+        window.SampleComponent=function(data) {
+
+        };
+
+        var bus = RayNS.RayFactory.createBus();
+        var imageDomElement = fixture.getRootElement().getElementsByTagName("img")[0];
+        var componentCommand=RayNS.RayFactory.createComponentInstanceCommand(imageDomElement, bus);
+        expect(componentCommand instanceof RayNS.ComponentInstanceCommand).toBeTruthy();
+    });
+
+    it("must execute a componentCommand from domElement & bus", function(done) {
+        ray.end();
+
+        var INITIAL_HTML=function(){/*
+            <img data-ray-component="SampleComponent" />
+        */};
+        fixture.add(INITIAL_HTML);
+
+        var bus = RayNS.RayFactory.createBus();
+        var imageDomElement = fixture.getRootElement().getElementsByTagName("img")[0];
+
+        window.SampleComponent=function(data) {
+            expect(data.DOMElement.innerHTML).toBe(imageDomElement.innerHTML);
+            done();
+        };
+
+        var componentCommand=RayNS.RayFactory.createComponentInstanceCommand(imageDomElement, bus);
+        componentCommand.execute();
+    });
 });
