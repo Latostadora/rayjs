@@ -5,7 +5,7 @@
 describe("ray JS lib", function() {
 
     var EVENT_NAMES_IN_TEST = {document: 'DOMContentLoadedTest', window: 'loadTest'};
-    var fixture=new Spec.HtmlFixture();
+    var fixture=new HtmlFixture();
     var ray=new RayNS.Ray(EVENT_NAMES_IN_TEST);
 
     function createEvent(name) {
@@ -42,7 +42,7 @@ describe("ray JS lib", function() {
             image.setAttribute("src","images/test2.jpg");
         };
 
-        fixture.add(INITIAL_HTML);
+        fixture.append(INITIAL_HTML);
 
         fireDOMReady();
 
@@ -64,7 +64,7 @@ describe("ray JS lib", function() {
             image.setAttribute("src","images/test2.jpg");
         };
 
-        fixture.add(INITIAL_HTML);
+        fixture.append(INITIAL_HTML);
 
         fireDOMReady();
 
@@ -87,7 +87,7 @@ describe("ray JS lib", function() {
             image.setAttribute("src","images/test2.jpg");
         };
 
-        fixture.add(INITIAL_HTML);
+        fixture.append(INITIAL_HTML);
 
         fireDOMReady();
 
@@ -107,7 +107,7 @@ describe("ray JS lib", function() {
             image.setAttribute("src","images/test2.jpg");
         };
 
-        fixture.add(INITIAL_HTML);
+        fixture.append(INITIAL_HTML);
 
         fireDOMReady();
 
@@ -124,7 +124,7 @@ describe("ray JS lib", function() {
             done();
         };
 
-        fixture.add(INITIAL_HTML);
+        fixture.append(INITIAL_HTML);
 
         fireDOMReady();
     });
@@ -147,7 +147,7 @@ describe("ray JS lib", function() {
         };
         window.ChangeImageSrcComponent=ChangeImageSrcComponent;
 
-        fixture.add(INITIAL_HTML);
+        fixture.append(INITIAL_HTML);
 
         fireDOMReady();
 
@@ -166,7 +166,7 @@ describe("ray JS lib", function() {
 
         window.SampleComponent=SampleComponent;
 
-        fixture.add(INITIAL_HTML);
+        fixture.append(INITIAL_HTML);
 
         fireDOMReady();
 
@@ -189,7 +189,7 @@ describe("ray JS lib", function() {
 
         window.SampleComponent=SampleComponent;
 
-        fixture.add(INITIAL_HTML);
+        fixture.append(INITIAL_HTML);
 
         fireDOMReady();
 
@@ -211,7 +211,7 @@ describe("ray JS lib", function() {
 
         window.SampleComponent=SampleComponent;
 
-        fixture.add(INITIAL_HTML);
+        fixture.append(INITIAL_HTML);
 
         fireDOMReady();
 
@@ -244,7 +244,7 @@ describe("ray JS lib", function() {
 
         window.SampleComponent=SampleComponent;
 
-        fixture.add(INITIAL_HTML);
+        fixture.append(INITIAL_HTML);
 
         fireDOMReady();
 
@@ -277,7 +277,7 @@ describe("ray JS lib", function() {
 
         window.SampleComponent=SampleComponent;
 
-        fixture.add(INITIAL_HTML);
+        fixture.append(INITIAL_HTML);
 
         fireDOMReady();
 
@@ -305,7 +305,7 @@ describe("ray JS lib", function() {
 
         window.SampleComponent=SampleComponent;
 
-        fixture.add(INITIAL_HTML);
+        fixture.append(INITIAL_HTML);
 
         fireDOMReady();
 
@@ -331,7 +331,7 @@ describe("ray JS lib", function() {
 
         window.SampleComponent=SampleComponent;
 
-        fixture.add(INITIAL_HTML);
+        fixture.append(INITIAL_HTML);
 
         fireDOMReady();
 
@@ -359,7 +359,7 @@ describe("ray JS lib", function() {
 
         window.SampleComponent=SampleComponent;
 
-        fixture.add(INITIAL_HTML);
+        fixture.append(INITIAL_HTML);
 
         fireDOMReady();
 
@@ -378,7 +378,7 @@ describe("ray JS lib", function() {
 
         fireDOMReady();
 
-        fixture.add(INITIAL_HTML);
+        fixture.append(INITIAL_HTML);
     });
 
     it("should instantiate components on changes in DOM after load/ready", function(done) {
@@ -401,11 +401,11 @@ describe("ray JS lib", function() {
             Sample2Count++;
         };
 
-        fixture.add(INITIAL_HTML);
+        fixture.append(INITIAL_HTML);
 
         fireDOMReady();
 
-        fixture.add(AFTER_HTML);
+        fixture.append(AFTER_HTML);
 
         setTimeout(function(){
             expect(SampleCount).toBe(1);
@@ -425,7 +425,7 @@ describe("ray JS lib", function() {
             SampleCount++;
         };
 
-        fixture.add(AFTER_HTML);
+        fixture.append(AFTER_HTML);
         ray.getCommandDispatcher().loadNewComponents();
 
         expect(SampleCount).toBe(1);
@@ -446,7 +446,7 @@ describe("ray JS lib", function() {
 
         window.SampleComponent=SampleComponent;
 
-        fixture.add(INITIAL_HTML);
+        fixture.append(INITIAL_HTML);
 
         fireDOMReady();
 
@@ -457,7 +457,7 @@ describe("ray JS lib", function() {
         var INITIAL_HTML=function(){/*
             <img data-ray-component="NonExistentComponent" />
         */};
-        fixture.add(INITIAL_HTML);
+        fixture.append(INITIAL_HTML);
         ray.eventBus.on("ray.error", function(exception){
             expect(exception instanceof Error).toBeTruthy();
             expect("<NonExistentComponent> JS object not Found").toBe(exception.message);
@@ -470,7 +470,7 @@ describe("ray JS lib", function() {
         var INITIAL_HTML=function(){/*
             <img data-ray-component="NonExistentComponent" />
         */};
-        fixture.add(INITIAL_HTML);
+        fixture.append(INITIAL_HTML);
 
         var bus = RayNS.RayFactory.createBus();
 
@@ -484,11 +484,11 @@ describe("ray JS lib", function() {
         var INITIAL_HTML=function(){/*
             <img data-ray-component="NonExistentComponent" />
         */};
-        fixture.add(INITIAL_HTML);
+        fixture.append(INITIAL_HTML);
 
 
         var bus = RayNS.RayFactory.createBus();
-        var fixtureDomElement = fixture.getRootElement();
+        var fixtureDomElement = fixture.rootElement();
         var data = RayNS.RayFactory.createData(fixtureDomElement, bus);
 
         expect(data).not.toBeNull();
@@ -500,14 +500,14 @@ describe("ray JS lib", function() {
         var INITIAL_HTML=function(){/*
             <img data-ray-component="SampleComponent" />
         */};
-        fixture.add(INITIAL_HTML);
+        fixture.append(INITIAL_HTML);
 
         window.SampleComponent=function(data) {
 
         };
 
         var bus = RayNS.RayFactory.createBus();
-        var imageDomElement = fixture.getRootElement().getElementsByTagName("img")[0];
+        var imageDomElement = fixture.rootElement().getElementsByTagName("img")[0];
         var data = RayNS.RayFactory.createData(imageDomElement, bus);
 
         var sampleComponentInstance=RayNS.RayFactory.createComponent(data);
@@ -518,14 +518,14 @@ describe("ray JS lib", function() {
         var INITIAL_HTML=function(){/*
             <img data-ray-component="SampleComponent" />
         */};
-        fixture.add(INITIAL_HTML);
+        fixture.append(INITIAL_HTML);
 
         window.SampleComponent=function(data) {
 
         };
 
         var bus = RayNS.RayFactory.createBus();
-        var imageDomElement = fixture.getRootElement().getElementsByTagName("img")[0];
+        var imageDomElement = fixture.rootElement().getElementsByTagName("img")[0];
         var componentCommand=RayNS.RayFactory.createComponentInstanceCommand(imageDomElement, bus);
         expect(componentCommand instanceof RayNS.ComponentInstanceCommand).toBeTruthy();
     });
@@ -536,10 +536,10 @@ describe("ray JS lib", function() {
         var INITIAL_HTML=function(){/*
             <img data-ray-component="SampleComponent" />
         */};
-        fixture.add(INITIAL_HTML);
+        fixture.append(INITIAL_HTML);
 
         var bus = RayNS.RayFactory.createBus();
-        var imageDomElement = fixture.getRootElement().getElementsByTagName("img")[0];
+        var imageDomElement = fixture.rootElement().getElementsByTagName("img")[0];
 
         window.SampleComponent=function(data) {
             expect(data.DOMElement.innerHTML).toBe(imageDomElement.innerHTML);

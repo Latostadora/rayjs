@@ -1,0 +1,26 @@
+{
+  "name": "rayjs",
+  "version": "1.0.0",
+  "description": "`ray.js` is a library that checks the DOM for html components and execute its related js counterpart",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/josecgil/rayjs.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/josecgil/rayjs/issues"
+  },
+  "homepage": "https://github.com/josecgil/rayjs#readme",
+  "devDependencies": {
+    "html-fixture": "^0.9.15"
+  }
+}
