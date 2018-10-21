@@ -337,5 +337,3 @@ if (!Array.prototype.forEach) {
     exports.RayNS.Ray=Ray;
 })(window);
 
-//var ray=new RayNS.Ray();
-//ray.begin();
