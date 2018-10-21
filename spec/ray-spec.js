@@ -1,5 +1,7 @@
 /*  TODO
     AJAX
+    Component class must create itself
+    ComponentData is a missing class (with create also)
 */
 
 describe("ray JS lib", function() {
@@ -467,17 +469,10 @@ describe("ray JS lib", function() {
     });
 
     it("must create a new Bus", function() {
-        var INITIAL_HTML=function(){/*
-            <img data-ray-component="NonExistentComponent" />
-        */};
-        fixture.append(INITIAL_HTML);
-
-        var bus = RayNS.RayFactory.createBus();
+        var bus = RayNS.EventBus.create();
 
         expect(bus).not.toBeNull();
         expect(bus instanceof RayNS.EventBus).toBeTruthy();
-
-
     });
 
     it("must create a data from dom & bus", function() {
@@ -487,16 +482,16 @@ describe("ray JS lib", function() {
         fixture.append(INITIAL_HTML);
 
 
-        var bus = RayNS.RayFactory.createBus();
-        var fixtureDomElement = fixture.rootElement();
-        var data = RayNS.RayFactory.createData(fixtureDomElement, bus);
+        var bus = RayNS.EventBus.create();
+        var imageDomElement = fixture.elementByTag("img");
+        var data = RayNS.ComponentData.create(imageDomElement, bus);
 
         expect(data).not.toBeNull();
         expect(data.bus instanceof RayNS.EventBus).toBeTruthy();
-        expect(fixtureDomElement.innerHTML).toBe(data.DOMElement.innerHTML);
+        expect(imageDomElement.innerHTML).toBe(data.DOMElement.innerHTML);
     });
 
-    it("must create a component instance from data", function() {
+    it("must create a Component from domElement & bus", function() {
         var INITIAL_HTML=function(){/*
             <img data-ray-component="SampleComponent" />
         */};
@@ -506,31 +501,13 @@ describe("ray JS lib", function() {
 
         };
 
-        var bus = RayNS.RayFactory.createBus();
-        var imageDomElement = fixture.rootElement().getElementsByTagName("img")[0];
-        var data = RayNS.RayFactory.createData(imageDomElement, bus);
-
-        var sampleComponentInstance=RayNS.RayFactory.createComponent(data);
-        expect(sampleComponentInstance instanceof SampleComponent).toBeTruthy();
+        var bus = RayNS.EventBus.create();
+        var imageDomElement = fixture.elementByTag("img");
+        var componentCommand=RayNS.Component.create(imageDomElement, bus);
+        expect(componentCommand instanceof RayNS.Component).toBeTruthy();
     });
 
-    it("must create a componentCommand from domElement & bus", function() {
-        var INITIAL_HTML=function(){/*
-            <img data-ray-component="SampleComponent" />
-        */};
-        fixture.append(INITIAL_HTML);
-
-        window.SampleComponent=function(data) {
-
-        };
-
-        var bus = RayNS.RayFactory.createBus();
-        var imageDomElement = fixture.rootElement().getElementsByTagName("img")[0];
-        var componentCommand=RayNS.RayFactory.createComponentInstanceCommand(imageDomElement, bus);
-        expect(componentCommand instanceof RayNS.ComponentInstanceCommand).toBeTruthy();
-    });
-
-    it("must execute a componentCommand from domElement & bus", function(done) {
+    it("must execute a Component from domElement & bus", function(done) {
         ray.end();
 
         var INITIAL_HTML=function(){/*
@@ -538,15 +515,15 @@ describe("ray JS lib", function() {
         */};
         fixture.append(INITIAL_HTML);
 
-        var bus = RayNS.RayFactory.createBus();
-        var imageDomElement = fixture.rootElement().getElementsByTagName("img")[0];
+        var bus = RayNS.EventBus.create();
+        var imageDomElement = fixture.elementByTag("img");
 
         window.SampleComponent=function(data) {
             expect(data.DOMElement.innerHTML).toBe(imageDomElement.innerHTML);
             done();
         };
 
-        var componentCommand=RayNS.RayFactory.createComponentInstanceCommand(imageDomElement, bus);
+        var componentCommand=RayNS.Component.create(imageDomElement, bus);
         componentCommand.execute();
     });
 });

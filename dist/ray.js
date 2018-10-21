@@ -153,8 +153,8 @@ if (!Array.prototype.forEach) {
                 }
                 domElement.setAttribute(EXECUTED_ATTRIBUTE, '');
 
-                var data=RayNS.RayFactory.createData(domElement, self.eventBus);
-                return RayNS.RayFactory.createComponent(data);
+                var data=RayNS.ComponentData.createData(domElement, self.eventBus);
+                return RayNS.Component.createComponent(data);
             } catch (e) {
                 self.eventBus.trigger("ray.error", e);
                 console.log("RayJS: Error loading components: "+ e.message);
@@ -238,11 +238,11 @@ if (!Array.prototype.forEach) {
         this.data=data;
     };
 
-    ComponentInstanceCommand.prototype.execute=function(){
-        return new this.componentObject(this.data);
+    Component.prototype.execute=function(){
+        return new this.componentConstructorFn(this.data);
     };
 
-    exports.RayNS.ComponentInstanceCommand=ComponentInstanceCommand;
+    exports.RayNS.Component=Component;
 })(window);
 
 
@@ -250,7 +250,7 @@ if (!Array.prototype.forEach) {
 
     exports.RayNS=exports.RayNS || {};
 
-    var ComponentInstanceCommand=RayNS.ComponentInstanceCommand;
+    var ComponentInstanceCommand=RayNS.Component;
 
     var RayFactory=function(){
 
@@ -331,7 +331,7 @@ if (!Array.prototype.forEach) {
         if (componentObject==undefined) {
             throw new Error("<"+componentName+"> JS object not Found");
         }
-        return new ComponentInstanceCommand(componentObject, data);
+        return new Component(componentObject, data);
     };
     
 

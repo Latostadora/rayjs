@@ -5,7 +5,7 @@
     var Ray=function(eventNamesToListen) {
         this.eventNamesToListen=eventNamesToListen || {document:'DOMContentLoaded', window:'load'};
         this.raydocument=new RayNS.Document(this.eventNamesToListen);
-        this.eventBus=RayNS.RayFactory.createBus();
+        this.eventBus=RayNS.EventBus.create();
         this.commandDispatcher = new RayNS.CommandDispatcher(this.eventBus);
     };
 

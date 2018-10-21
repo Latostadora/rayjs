@@ -57,6 +57,10 @@
         return true;
     };
 
+    EventBus.create=function() {
+        return new EventBus();
+    };
+
     exports.RayNS.EventBus=EventBus;
 })(window);
 
