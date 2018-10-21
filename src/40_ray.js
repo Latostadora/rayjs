@@ -30,6 +30,14 @@
         return this.commandDispatcher;
     };
 
+    Ray.createBus=function() {
+        return RayNS.EventBus.create();
+    };
+
+    Ray.createComponent=function(domElement, bus) {
+        return RayNS.Component.create(domElement, bus);
+    };
+
     exports.RayNS.Ray=Ray;
 })(window);
 

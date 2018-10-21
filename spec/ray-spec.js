@@ -8,7 +8,8 @@ describe("ray JS lib", function() {
 
     var EVENT_NAMES_IN_TEST = {document: 'DOMContentLoadedTest', window: 'loadTest'};
     var fixture=new HtmlFixture();
-    var ray=new RayNS.Ray(EVENT_NAMES_IN_TEST);
+    var Ray=RayNS.Ray;
+    var ray=new Ray(EVENT_NAMES_IN_TEST);
 
     function createEvent(name) {
         var event = document.createEvent("Event");
@@ -469,26 +470,10 @@ describe("ray JS lib", function() {
     });
 
     it("must create a new Bus", function() {
-        var bus = RayNS.EventBus.create();
+        var bus = Ray.createBus();
 
         expect(bus).not.toBeNull();
         expect(bus instanceof RayNS.EventBus).toBeTruthy();
-    });
-
-    it("must create a data from dom & bus", function() {
-        var INITIAL_HTML=function(){/*
-            <img data-ray-component="NonExistentComponent" />
-        */};
-        fixture.append(INITIAL_HTML);
-
-
-        var bus = RayNS.EventBus.create();
-        var imageDomElement = fixture.elementByTag("img");
-        var data = RayNS.ComponentData.create(imageDomElement, bus);
-
-        expect(data).not.toBeNull();
-        expect(data.bus instanceof RayNS.EventBus).toBeTruthy();
-        expect(imageDomElement.innerHTML).toBe(data.DOMElement.innerHTML);
     });
 
     it("must create a Component from domElement & bus", function() {
@@ -501,9 +486,9 @@ describe("ray JS lib", function() {
 
         };
 
-        var bus = RayNS.EventBus.create();
+        var bus = Ray.createBus();
         var imageDomElement = fixture.elementByTag("img");
-        var componentCommand=RayNS.Component.create(imageDomElement, bus);
+        var componentCommand=Ray.createComponent(imageDomElement, bus);
         expect(componentCommand instanceof RayNS.Component).toBeTruthy();
     });
 
@@ -515,7 +500,7 @@ describe("ray JS lib", function() {
         */};
         fixture.append(INITIAL_HTML);
 
-        var bus = RayNS.EventBus.create();
+        var bus = Ray.createBus();
         var imageDomElement = fixture.elementByTag("img");
 
         window.SampleComponent=function(data) {
@@ -523,7 +508,7 @@ describe("ray JS lib", function() {
             done();
         };
 
-        var componentCommand=RayNS.Component.create(imageDomElement, bus);
+        var componentCommand=Ray.createComponent(imageDomElement, bus);
         componentCommand.execute();
     });
 });
