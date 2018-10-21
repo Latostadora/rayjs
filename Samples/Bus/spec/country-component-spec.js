@@ -1,5 +1,5 @@
 
-describe("Bus Sample Components", function() {
+describe("Country Component", function() {
 
     var fixture=new HtmlFixture();
     var Ray=RayNS.Ray;
@@ -15,47 +15,44 @@ describe("Bus Sample Components", function() {
         ray.end();
     });
 
+    function checkVisibilityOnLoadByCountry(HTML, COUNTRY_VALUE, done) {
+        fixture.append(HTML);
+        var bus = Ray.createBus();
+        bus.on(Events.COUNTRY_CHANGED, function (currentCountry) {
+            expect(currentCountry).toBe(COUNTRY_VALUE);
+            done();
+        });
+        var selectElement = fixture.elementByTag("select");
+        var component = Ray.createComponent(selectElement, bus);
+
+        component.execute();
+    }
+
     it("should trigger COUNTRY_CHANGED event on component load with selected option value (DE)", function(done) {
-        fixture.append(function () {/*
+        var HTML = function () {/*
             <select data-ray-component="CountryComponent">
                 <option label="Alemania" value="DE" selected="selected">Alemania</option>
                 <option label="España" value="ES">España</option>
                 <option label="Estados Unidos" value="US" >Estados Unidos</option>
             </select>
         */
-        });
+        };
+        var COUNTRY_VALUE = "DE";
 
-        var bus=Ray.createBus();
-        bus.on(Events.COUNTRY_CHANGED, function(currentCountry){
-            expect(currentCountry).toBe("DE");
-            done();
-        });
-        var selectElement = fixture.elementByTag("select");
-        var component=Ray.createComponent(selectElement, bus);
-
-        component.execute();
-
+        checkVisibilityOnLoadByCountry(HTML, COUNTRY_VALUE, done);
     });
 
     it("should trigger COUNTRY_CHANGED event on component load with selected option value (ES)", function(done) {
-        fixture.append(function () {/*
+        var HTML = function () {/*
             <select data-ray-component="CountryComponent">
                 <option label="Alemania" value="DE">Alemania</option>
                 <option label="España" value="ES" selected="selected">España</option>
                 <option label="Estados Unidos" value="US" >Estados Unidos</option>
             </select>
         */
-        });
-
-        var bus=Ray.createBus();
-        bus.on(Events.COUNTRY_CHANGED, function(currentCountry){
-            expect(currentCountry).toBe("ES");
-            done();
-        });
-        var selectElement = fixture.elementByTag("select");
-        var component=Ray.createComponent(selectElement, bus);
-
-        component.execute();
+        };
+        var COUNTRY_VALUE = "ES";
+        checkVisibilityOnLoadByCountry(HTML, COUNTRY_VALUE, done);
 
     });
 
@@ -78,7 +75,7 @@ describe("Bus Sample Components", function() {
             expect(currentCountry).toBe("DE");
             done();
         });
-        fixture.elementBySelector("option[value=DE").selected = 'selected';
+        fixture.elementBySelector("option[value=DE]").selected = 'selected';
     });
 
 

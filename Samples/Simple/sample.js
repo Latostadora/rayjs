@@ -1,4 +1,5 @@
-var CountryStatesSelectorComponent=function(divComponent){
+var CountryStatesSelectorComponent=function(data){
+    var divComponent=data.DOMElement;
     var selectCountry=divComponent.querySelector("[data-country]");
     var selectState=divComponent.querySelector("[data-state]");
 
