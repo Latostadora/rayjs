@@ -1,7 +1,5 @@
 /*  TODO
     AJAX
-    Component class must create itself
-    ComponentData is a missing class (with create also)
 */
 
 describe("ray JS lib", function() {

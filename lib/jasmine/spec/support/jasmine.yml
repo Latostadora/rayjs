@@ -3,29 +3,29 @@
 src_dir:
   - 'src'
 src_files:
-  - 'core/requireCore.js'
-  - 'core/base.js'
-  - 'core/util.js'
+  - 'core/requireCore.src'
+  - 'core/base.src'
+  - 'core/util.src'
   #end of known dependencies
-  - 'core/Spec.js'
-  - 'core/Env.js'
-  - 'core/JsApiReporter.js'
-  - 'core/PrettyPrinter.js'
-  - 'core/Suite.js'
-  - 'core/**/*.js'
-  - 'html/**.js'
-  - '**/*.js'
+  - 'core/Spec.src'
+  - 'core/Env.src'
+  - 'core/JsApiReporter.src'
+  - 'core/PrettyPrinter.src'
+  - 'core/Suite.src'
+  - 'core/**/*.src'
+  - 'html/**.src'
+  - '**/*.src'
 stylesheets:
 helpers:
-  - 'helpers/asyncAwait.js'
-  - 'helpers/BrowserFlags.js'
-  - 'helpers/checkForMap.js'
-  - 'helpers/checkForSet.js'
-  - 'helpers/checkForSymbol.js'
-  - 'helpers/checkForTypedArrays.js'
-  - 'helpers/defineJasmineUnderTest.js'
+  - 'helpers/asyncAwait.src'
+  - 'helpers/BrowserFlags.src'
+  - 'helpers/checkForMap.src'
+  - 'helpers/checkForSet.src'
+  - 'helpers/checkForSymbol.src'
+  - 'helpers/checkForTypedArrays.src'
+  - 'helpers/defineJasmineUnderTest.src'
 spec_files:
-  - '**/*[Ss]pec.js'
+  - '**/*[Ss]pec.src'
   - '!npmPackage/**/*'
 spec_dir: spec
 random: true

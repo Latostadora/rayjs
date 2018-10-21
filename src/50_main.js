@@ -1,2 +1,2 @@
-var ray=new RayNS.Ray();
-ray.begin();
+//var ray=new RayNS.Ray();
+//ray.begin();

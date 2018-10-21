@@ -1,10 +1,10 @@
 src_dir:
   - 'src'
 src_files:
-  - '**/*.js'
+  - '**/*.src'
 helpers:
-  - 'helpers/**/*.js'
+  - 'helpers/**/*.src'
 spec_files:
-  - 'performance/performance_test.js'
+  - 'performance/performance_test.src'
 spec_dir: spec
 random: true

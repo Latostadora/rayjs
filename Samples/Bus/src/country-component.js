@@ -9,7 +9,7 @@ var CountryComponent=function(data){
 
     this.selectCountry.onchange=function changeEventHandler(event) {
         event.preventDefault();
-        bus.trigger("countryChanged", self.getCurrentCountry());
+        bus.trigger(Events.COUNTRY_CHANGED, self.getCurrentCountry());
     };
 };
 

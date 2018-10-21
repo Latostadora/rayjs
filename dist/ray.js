@@ -121,19 +121,50 @@ if (!Array.prototype.forEach) {
 
     exports.RayNS=exports.RayNS || {};
 
-    var CommandDispatcher=function(eventBus)
-    {
-        this.eventBus = eventBus;
+    var ComponentData=function(domElement, bus, commandDispatcher) {
+        this.DOMElement = domElement;
+        this.bus = bus;
+        this.commandDispatcher = commandDispatcher;
     };
 
-    CommandDispatcher.prototype.loadNewComponents = function() {
-        function getComponentName(dataRayComponent) {
-            var namespaces = dataRayComponent.split(".");
+    ComponentData.prototype._init=function() {
+        this.topics = {};
+        this.id = 0;
+    };
+
+    ComponentData.create=function(domElement, bus, commandDispatcher) {
+        //TODO: quitar commandDispatcher.
+        //TODO: sustituir por un comando que tiramos al bus (ray.refresh)?
+        return new ComponentData(domElement, bus, commandDispatcher);
+    };
+
+    exports.RayNS.ComponentData=ComponentData;
+})(window);
+
+
+(function (exports) {
+
+    exports.RayNS=exports.RayNS || {};
+
+    var Component=function(componentConstructorFn, data) {
+        this.componentConstructorFn=componentConstructorFn;
+        this.data=data;
+    };
+
+    Component.prototype.execute=function(){
+        return new this.componentConstructorFn(this.data);
+    };
+
+    Component.DATA_RAY_ATTR= "data-ray-component";
+
+    Component.create=function(domElement, bus) {
+        function getComponentName(dataRayComponentAttrValue) {
+            var namespaces = dataRayComponentAttrValue.split(".");
             return namespaces.pop();
         }
 
-        function getLastCallableObject(dataRayComponent) {
-            var namespaces = dataRayComponent.split(".");
+        function getLastNamespaceObject(dataRayComponentAttrValue) {
+            var namespaces = dataRayComponentAttrValue.split(".");
             namespaces.pop();
 
             var obj=window;
@@ -143,18 +174,48 @@ if (!Array.prototype.forEach) {
             return obj;
         }
 
-        var DATA_RAY_ATTR= "data-ray-component";
+        var data=RayNS.ComponentData.create(domElement, bus);
+
+        var dataRayComponentAttrValue = domElement.getAttribute(Component.DATA_RAY_ATTR);
+        var componentName = getComponentName(dataRayComponentAttrValue);
+        var lastNamespaceObject = getLastNamespaceObject(dataRayComponentAttrValue);
+        var componentConstructorFn = lastNamespaceObject[componentName];
+        if (componentConstructorFn==undefined) {
+            throw new Error("<"+componentName+"> JS object not Found");
+        }
+        return new Component(componentConstructorFn, data);
+    };
+
+    exports.RayNS.Component=Component;
+})(window);
+
+
+(function (exports) {
+
+    exports.RayNS=exports.RayNS || {};
+
+    var Component=RayNS.Component;
+
+    var CommandDispatcher=function(eventBus)
+    {
+        this.eventBus = eventBus;
+    };
+
+    CommandDispatcher.EXECUTED_ATTRIBUTE = 'data-ray-component-executed';
+
+    CommandDispatcher.prototype.loadNewComponents = function() {
+        var DATA_RAY_ATTR=RayNS.Component.DATA_RAY_ATTR;
         var self = this;
         return document.querySelectorAll("["+DATA_RAY_ATTR+"]").forEach(function(domElement){
             try {
-                var EXECUTED_ATTRIBUTE = 'data-ray-component-executed';
+                var EXECUTED_ATTRIBUTE = CommandDispatcher.EXECUTED_ATTRIBUTE;
                 if (domElement.hasAttribute(EXECUTED_ATTRIBUTE)) {
                     return;
                 }
                 domElement.setAttribute(EXECUTED_ATTRIBUTE, '');
 
-                var data=RayNS.ComponentData.createData(domElement, self.eventBus);
-                return RayNS.Component.createComponent(data);
+                var component=Component.create(domElement, self.eventBus);
+                component.execute();
             } catch (e) {
                 self.eventBus.trigger("ray.error", e);
                 console.log("RayJS: Error loading components: "+ e.message);
@@ -225,120 +286,12 @@ if (!Array.prototype.forEach) {
         return true;
     };
 
+    EventBus.create=function() {
+        return new EventBus();
+    };
+
     exports.RayNS.EventBus=EventBus;
 })(window);
-
-
-(function (exports) {
-
-    exports.RayNS=exports.RayNS || {};
-
-    var ComponentInstanceCommand=function(componentObject, data) {
-        this.componentObject=componentObject;
-        this.data=data;
-    };
-
-    Component.prototype.execute=function(){
-        return new this.componentConstructorFn(this.data);
-    };
-
-    exports.RayNS.Component=Component;
-})(window);
-
-
-(function(exports) {
-
-    exports.RayNS=exports.RayNS || {};
-
-    var ComponentInstanceCommand=RayNS.Component;
-
-    var RayFactory=function(){
-
-    };
-
-    RayFactory.createBus=function() {
-        return new RayNS.EventBus();
-    };
-
-    RayFactory.createData=function(domElement, bus) {
-        //TODO: quitar commandDispatcher.
-        //TODO: sustituir por un comando que tiramos al bus (ray.refresh)?
-        var data = {
-            DOMElement: domElement,
-            bus: bus,
-            commandDispatcher: null
-        };
-        return data;
-    };
-
-    RayFactory.createComponent=function(data) {
-        function getComponentName(dataRayComponent) {
-            var namespaces = dataRayComponent.split(".");
-            return namespaces.pop();
-        }
-
-        function getLastCallableObject(dataRayComponent) {
-            var namespaces = dataRayComponent.split(".");
-            namespaces.pop();
-
-            var obj=window;
-            namespaces.forEach(function(namespace){
-                obj=obj[namespace];
-            });
-            return obj;
-        }
-
-        var DATA_RAY_ATTR= "data-ray-component";
-
-        var domElement=data.DOMElement;
-
-        var dataRayComponentAttrValue = domElement.getAttribute(DATA_RAY_ATTR);
-        var componentName = getComponentName(dataRayComponentAttrValue);
-        var lastNamespaceObject = getLastCallableObject(dataRayComponentAttrValue);
-        var component = lastNamespaceObject[componentName];
-        if (component==undefined) {
-            throw new Error("<"+componentName+"> JS object not Found");
-        }
-        return new component(data);
-    };
-
-
-    RayFactory.createComponentInstanceCommand=function(domElement, bus) {
-        function getComponentName(dataRayComponent) {
-            var namespaces = dataRayComponent.split(".");
-            return namespaces.pop();
-        }
-
-        function getLastCallableObject(dataRayComponent) {
-            var namespaces = dataRayComponent.split(".");
-            namespaces.pop();
-
-            var obj=window;
-            namespaces.forEach(function(namespace){
-                obj=obj[namespace];
-            });
-            return obj;
-        }
-
-        var DATA_RAY_ATTR= "data-ray-component";
-
-        var data=RayFactory.createData(domElement, bus);
-        
-        var dataRayComponentAttrValue = domElement.getAttribute(DATA_RAY_ATTR);
-        var componentName = getComponentName(dataRayComponentAttrValue);
-        var lastNamespaceObject = getLastCallableObject(dataRayComponentAttrValue);
-        var componentObject = lastNamespaceObject[componentName];
-        if (componentObject==undefined) {
-            throw new Error("<"+componentName+"> JS object not Found");
-        }
-        return new Component(componentObject, data);
-    };
-    
-
-    exports.RayNS.RayFactory=RayFactory;
-})(window);
-
-
 
 
 (function (exports) {
@@ -348,7 +301,7 @@ if (!Array.prototype.forEach) {
     var Ray=function(eventNamesToListen) {
         this.eventNamesToListen=eventNamesToListen || {document:'DOMContentLoaded', window:'load'};
         this.raydocument=new RayNS.Document(this.eventNamesToListen);
-        this.eventBus=RayNS.RayFactory.createBus();
+        this.eventBus=RayNS.EventBus.create();
         this.commandDispatcher = new RayNS.CommandDispatcher(this.eventBus);
     };
 
@@ -373,8 +326,16 @@ if (!Array.prototype.forEach) {
         return this.commandDispatcher;
     };
 
+    Ray.createBus=function() {
+        return RayNS.EventBus.create();
+    };
+
+    Ray.createComponent=function(domElement, bus) {
+        return RayNS.Component.create(domElement, bus);
+    };
+
     exports.RayNS.Ray=Ray;
 })(window);
 
-var ray=new RayNS.Ray();
-ray.begin();
+//var ray=new RayNS.Ray();
+//ray.begin();
