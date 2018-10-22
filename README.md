@@ -6,25 +6,28 @@
 
 ## Table of contents
 
-1. [Requirements](#requirements)
-2. [Installation](#installation)
-3. [An overview](#an-overview)
-4. [Errors](#errors)
-5. [More examples](#more-examples)
-
-## Requirements
-
-Install uglify to minify javascript
-
-```$npm install uglify-js -g```
+1. [Installation](#installation)
+2. [An overview](#an-overview)
+3. [Errors](#errors)
+4. [More examples](#more-examples)
+5. [Contribute](#Contribute)
 
 ## Installation
 
-Just download [ray.js](https://raw.githubusercontent.com/josecgil/rayjs/master/dist/ray.js)
+Just download [ray.js](https://raw.githubusercontent.com/josecgil/rayjs/master/dist/ray.js) and load it in your page
 
 or use this:
 
 ```<script type="text/javascript" src="https://raw.githubusercontent.com/josecgil/rayjs/master/dist/ray-min.js"></script>```
+
+then, when your are ready to start looking for components, execute this:
+
+```
+<script type="text/javascript">
+    var ray=new RayNS.Ray();
+    ray.begin();
+</script>
+```
 
 ## An overview
 
@@ -46,6 +49,7 @@ the JS part of this component changes the src when it's executed:
         image.setAttribute("src","images/test2.jpg");
     };
 ```
+For a more complex example check the [samples directory](https://github.com/josecgil/rayjs/tree/master/Samples)
 
 ## Data object
 
@@ -73,3 +77,10 @@ The ```ray.js``` EventBus has two methods:
 ## More examples
 
 You can check more complex examples in the [samples directory](https://github.com/josecgil/rayjs/tree/master/Samples)
+
+## Contribute
+
+Install uglify to minify javascript
+
+```$npm install uglify-js -g```
+
