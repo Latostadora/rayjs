@@ -7,26 +7,11 @@ describe("Country Component", function() {
 
     beforeEach(function() {
         fixture.create();
-        ray.begin();
     });
 
     afterEach(function() {
         fixture.destroy();
-        ray.end();
     });
-
-    function checkVisibilityOnLoadByCountry(HTML, COUNTRY_VALUE, done) {
-        fixture.append(HTML);
-        var bus = Ray.createBus();
-        bus.on(Events.COUNTRY_CHANGED, function (currentCountry) {
-            expect(currentCountry).toBe(COUNTRY_VALUE);
-            done();
-        });
-        var selectElement = fixture.elementByTag("select");
-        var component = Ray.createComponent(selectElement, bus);
-
-        component.execute();
-    }
 
     it("should trigger COUNTRY_CHANGED event on component load with selected option value (DE)", function(done) {
         var HTML = function () {/*
@@ -39,7 +24,15 @@ describe("Country Component", function() {
         };
         var COUNTRY_VALUE = "DE";
 
-        checkVisibilityOnLoadByCountry(HTML, COUNTRY_VALUE, done);
+        fixture.append(HTML);
+        var bus = Ray.createBus();
+        bus.on(Events.COUNTRY_CHANGED, function (currentCountry) {
+            expect(currentCountry).toBe(COUNTRY_VALUE);
+            done();
+        });
+        var selectElement = fixture.elementByTag("select");
+        var component = Ray.createComponent(selectElement, bus);
+        component.execute();
     });
 
     it("should trigger COUNTRY_CHANGED event on component load with selected option value (ES)", function(done) {
@@ -52,8 +45,15 @@ describe("Country Component", function() {
         */
         };
         var COUNTRY_VALUE = "ES";
-        checkVisibilityOnLoadByCountry(HTML, COUNTRY_VALUE, done);
-
+        fixture.append(HTML);
+        var bus = Ray.createBus();
+        bus.on(Events.COUNTRY_CHANGED, function (currentCountry) {
+            expect(currentCountry).toBe(COUNTRY_VALUE);
+            done();
+        });
+        var selectElement = fixture.elementByTag("select");
+        var component = Ray.createComponent(selectElement, bus);
+        component.execute();
     });
 
     it("should trigger COUNTRY_CHANGED with correct value event on selected city", function(done) {
