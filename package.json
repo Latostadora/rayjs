@@ -4,9 +4,9 @@
   "description": "`ray.js` is a library that checks the DOM for html components and execute its related js counterpart",
   "main": "index.js",
   "scripts": {
-    "clean": "rm -rf dist/*.*",
-    "transpile": "babel src_e6 -d src",
-    "concatenate": "cat src/*.js >dist/ray.js",
+    "clean": "rm -rf dist/*.* && rm -rf dist/src/*.*",
+    "transpile": "babel src -d dist/src",
+    "concatenate": "cat dist/src/*.js >dist/ray.js",
     "minify": "uglifyjs dist/ray.js --compress --mangle --output dist/ray-min.js",
     "build": "npm run clean && npm run transpile && npm run concatenate && npm run minify",
     "test": "npm run build && jest"
