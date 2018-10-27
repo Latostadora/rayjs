@@ -2,7 +2,7 @@
     AJAX
 */
 
-require('./../dist/ray.js');
+require('./../dist/ray-min.js');
 const HtmlFixture = require('html-fixture');
 
 describe("ray JS lib", function() {

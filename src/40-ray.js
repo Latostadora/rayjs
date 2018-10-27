@@ -1,43 +1,40 @@
-(function (exports) {
-
-    exports.RayNS=exports.RayNS || {};
-
-    var Ray=function(eventNamesToListen) {
+class Ray {
+    constructor(eventNamesToListen) {
         this.eventNamesToListen=eventNamesToListen || {document:'DOMContentLoaded', window:'load'};
         this.raydocument=new RayNS.Document(this.eventNamesToListen);
         this.eventBus=RayNS.Bus.create();
         this.commandDispatcher = new RayNS.CommandDispatcher(this.eventBus);
-    };
+    }
 
-    Ray.prototype.begin=function() {
+    begin() {
         this.raydocument.begin();
-        var self = this;
-        this.raydocument.ready(function(){
+        const self = this;
+        this.raydocument.ready(() => {
             self.commandDispatcher.loadNewComponents();
         });
-        this.intervalId=setInterval(function(){
+        this.intervalId=setInterval(() => {
             self.commandDispatcher.loadNewComponents();
         },400);
-    };
+    }
 
-    Ray.prototype.end=function() {
+    end() {
         clearInterval(this.intervalId);
         this.raydocument.end();
         this.eventBus.end();
-    };
+    }
 
-    Ray.prototype.getCommandDispatcher=function() {
+    getCommandDispatcher() {
         return this.commandDispatcher;
-    };
+    }
 
-    Ray.createBus=function() {
+    static createBus() {
         return RayNS.Bus.create();
-    };
+    }
 
-    Ray.createComponent=function(domElement, bus) {
+    static createComponent(domElement, bus) {
         return RayNS.Component.create(domElement, bus);
-    };
+    }
+}
 
-    exports.RayNS.Ray=Ray;
-})(window);
-
+window.RayNS=window.RayNS || {};
+window.RayNS.Ray=Ray;
