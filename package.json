@@ -4,7 +4,8 @@
   "description": "`ray.js` is a library that checks the DOM for html components and execute its related js counterpart",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "build": "sh tools/bundle.sh",
+    "test": "npm run build && jest"
   },
   "repository": {
     "type": "git",
