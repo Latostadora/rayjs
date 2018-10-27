@@ -1,25 +1,22 @@
-"use strict";
-
 // Production steps of ECMA-262, Edition 5, 15.4.4.18
 // Reference: http://es5.github.com/#x15.4.4.18
 if (!Array.prototype.forEach) {
 
     Array.prototype.forEach = function forEach(callback, thisArg) {
-        var T = void 0;
-        var k = void 0;
+        'use strict';
+        var T, k;
 
         if (this == null) {
             throw new TypeError("this is null or not defined");
         }
 
-        var kValue = void 0; // Hack to convert O.length to a UInt32
+        var kValue,
+        // 1. Let O be the result of calling ToObject passing the |this| value as the argument.
+            O = Object(this),
 
-        var // 1. Let O be the result of calling ToObject passing the |this| value as the argument.
-        O = Object(this);
-
-        var // 2. Let lenValue be the result of calling the Get internal method of O with the argument "length".
+        // 2. Let lenValue be the result of calling the Get internal method of O with the argument "length".
         // 3. Let len be ToUint32(lenValue).
-        len = O.length >>> 0;
+            len = O.length >>> 0; // Hack to convert O.length to a UInt32
 
         // 4. If IsCallable(callback) is false, throw a TypeError exception.
         // See: http://es5.github.com/#x9.11

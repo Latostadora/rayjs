@@ -1,30 +1,28 @@
-"use strict";
-
 // Production steps of ECMA-262, Edition 5, 15.4.4.18
 // Reference: http://es5.github.com/#x15.4.4.18
 if (!Array.prototype.forEach) {
 
     Array.prototype.forEach = function forEach(callback, thisArg) {
-        var T = void 0;
-        var k = void 0;
+        let T;
+        let k;
 
         if (this == null) {
             throw new TypeError("this is null or not defined");
         }
 
-        var kValue = void 0; // Hack to convert O.length to a UInt32
+        let kValue; // Hack to convert O.length to a UInt32
 
-        var // 1. Let O be the result of calling ToObject passing the |this| value as the argument.
-        O = Object(this);
+        const // 1. Let O be the result of calling ToObject passing the |this| value as the argument.
+            O = Object(this);
 
-        var // 2. Let lenValue be the result of calling the Get internal method of O with the argument "length".
-        // 3. Let len be ToUint32(lenValue).
-        len = O.length >>> 0;
+        const // 2. Let lenValue be the result of calling the Get internal method of O with the argument "length".
+            // 3. Let len be ToUint32(lenValue).
+            len = O.length >>> 0;
 
         // 4. If IsCallable(callback) is false, throw a TypeError exception.
         // See: http://es5.github.com/#x9.11
         if ({}.toString.call(callback) !== "[object Function]") {
-            throw new TypeError(callback + " is not a function");
+            throw new TypeError(`${callback} is not a function`);
         }
 
         // 5. If thisArg was supplied, let T be thisArg; else let T be undefined.

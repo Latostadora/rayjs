@@ -5,7 +5,6 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 //Adapted from https://gist.github.com/fatihacet/1290216
-
 var Bus = function () {
     function Bus() {
         _classCallCheck(this, Bus);
