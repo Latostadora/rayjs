@@ -1,2 +1,7 @@
+# IDE
+#
 .idea
+
+# npm
+#
 node_modules

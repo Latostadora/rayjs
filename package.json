@@ -3,24 +3,35 @@
   "version": "1.0.0",
   "description": "`ray.js` is a library that checks the DOM for html components and execute its related js counterpart",
   "main": "index.js",
-  "directories": {
-    "lib": "lib"
-  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/josecgil/rayjs.git"
+    "url": "git+https://github.com/Latostadora/rayjs.git"
   },
-  "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/josecgil/rayjs/issues"
+    "url": "https://github.com/Latostadora/rayjs/issues"
   },
-  "homepage": "https://github.com/josecgil/rayjs#readme",
+  "homepage": "https://github.com/Latostadora/rayjs#readme",
   "devDependencies": {
-    "html-fixture": "^0.9.15"
+    "html-fixture": "^0.9.15",
+    "babel-core": "^6.26.3",
+    "babel-jest": "^23.6.0",
+    "jest": "^23.6.0",
+    "regenerator-runtime": "^0.12.1",
+    "stryker-api": "^0.21.4",
+    "stryker-html-reporter": "^0.16.5",
+    "stryker-javascript-mutator": "^0.10.2",
+    "stryker-jest-runner": "^1.2.4"
+  },
+  "jest": {
+    "transform": {}
+  },
+  "dependencies": {
+    "babel-preset-env": "^1.7.0",
+    "stryker": "^0.29.2"
   }
 }
