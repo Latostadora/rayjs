@@ -10,7 +10,6 @@
 2. [An overview](#an-overview)
 3. [Errors](#errors)
 4. [More examples](#more-examples)
-5. [Contribute](#Contribute)
 
 ## Installation
 
@@ -77,10 +76,3 @@ The ```ray.js``` EventBus has two methods:
 ## More examples
 
 You can check more complex examples in the [samples directory](https://github.com/josecgil/rayjs/tree/master/Samples)
-
-## Contribute
-
-Install uglify to minify javascript
-
-```$npm install uglify-js -g```
-
