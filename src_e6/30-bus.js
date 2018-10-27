@@ -1,34 +1,30 @@
 //Adapted from https://gist.github.com/fatihacet/1290216
-
-(function (exports) {
-
-    exports.RayNS=exports.RayNS || {};
-
-    var EventBus=function() {
+class Bus {
+    constructor() {
         this._init();
-    };
+    }
 
-    EventBus.prototype._init=function() {
+    _init() {
         this.topics = {};
         this.id = 0;
-    };
+    }
 
-    EventBus.prototype.on = function(topic, callback) {
+    on(topic, callback) {
         if (!this.topics[topic]) {
             this.topics[topic] = [];
         }
         this.id++;
         this.topics[topic].push({
             id: this.id,
-            callback: callback
+            callback
         });
         return this.id;
-    };
+    }
 
-    EventBus.prototype.off = function(id) {
-        for (var m in this.topics) {
+    off(id) {
+        for (const m in this.topics) {
             if (!this.topics[m]) return false;
-            for (var i = 0, len = this.topics[m].length; i < len; i++) {
+            for (let i = 0, len = this.topics[m].length; i < len; i++) {
                 if (this.topics[m][i].id === id) {
                     this.topics[m].splice(i, 1);
                     return true;
@@ -36,32 +32,33 @@
             }
         }
         return false;
-    };
+    }
 
-    EventBus.prototype.end = function() {
+    end() {
         this._init();
-    };
+    }
 
-    EventBus.prototype.trigger = function(topic, args) {
+    trigger(topic, args) {
         if (!this.topics[topic]) {
             return false;
         }
-        var self=this;
-        setTimeout(function() {
-            var subscribers = self.topics[topic];
+        const self=this;
+        setTimeout(() => {
+            const subscribers = self.topics[topic];
             if (!subscribers) return;
-            subscribers.forEach(function(suscriber){
+            subscribers.forEach(suscriber => {
                 suscriber.callback(args);
             });
         }, 0);
         return true;
-    };
+    }
 
-    EventBus.create=function() {
-        return new EventBus();
-    };
+    static create() {
+        return new Bus();
+    }
+}
 
-    exports.RayNS.EventBus=EventBus;
-})(window);
+window.RayNS=window.RayNS || {};
+window.RayNS.Bus=Bus;
 
 

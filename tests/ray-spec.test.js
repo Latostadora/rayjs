@@ -180,14 +180,14 @@ describe("ray JS lib", function() {
         },10);
     });
 
-    it("should pass an EventBus to a component constructor", function(done) {
+    it("should pass an Bus to a component constructor", function(done) {
         const INITIAL_HTML=`
          <img data-ray-component="SampleComponent" />
          `;
 
         const SampleComponent=function(data) {
             expect(data.bus).not.toBeNull();
-            expect(data.bus instanceof RayNS.EventBus).toBeTruthy();
+            expect(data.bus instanceof RayNS.Bus).toBeTruthy();
             done();
         };
 
@@ -474,7 +474,7 @@ describe("ray JS lib", function() {
         const bus = Ray.createBus();
 
         expect(bus).not.toBeNull();
-        expect(bus instanceof RayNS.EventBus).toBeTruthy();
+        expect(bus instanceof RayNS.Bus).toBeTruthy();
     });
 
     it("must create a Component from domElement & bus", function() {
