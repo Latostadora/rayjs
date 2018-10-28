@@ -2,7 +2,16 @@
     AJAX
 */
 
-require('./../dist/ray-min.js');
+require ('../src/05_array_foreachpolyfill');
+require ('../src/10-ray-document');
+require ('../src/11-commands');
+require ('../src/12-events');
+require ('../src/13-component-data');
+require ('../src/15-component');
+require ('../src/20-command-dispatcher');
+require ('../src/30-bus');
+require ('../src/40-ray');
+
 const HtmlFixture = require('html-fixture');
 
 describe("ray JS lib", function() {
@@ -33,6 +42,29 @@ describe("ray JS lib", function() {
         ray.end();
     });
 
+    it("should work with 3 namespaces", function() {
+        const INITIAL_HTML=`
+         <img data-ray-component="NS1.NS2.NS3.ChangeImageSrcComponent" src="images/test1.jpg">
+         `;
+        const EXPECTED_HTML=`
+         <img data-ray-component="NS1.NS2.NS3.ChangeImageSrcComponent" src="images/test2.jpg" data-ray-component-executed>
+         `;
+
+        window.NS1={};
+        window.NS1.NS2={};
+        window.NS1.NS2.NS3={};
+        window.NS1.NS2.NS3.ChangeImageSrcComponent=function(data) {
+            const image=data.DOMElement;
+            image.setAttribute("src","images/test2.jpg");
+        };
+
+        fixture.append(INITIAL_HTML);
+
+        fireDOMReady();
+
+        expect(fixture.isEqual(EXPECTED_HTML)).toBeTruthy();
+    });
+
     it("should instantiate a Component from a data-ray-component attrib", function() {
         const INITIAL_HTML=`
             <img data-ray-component="ChangeImageSrcComponent" src="images/test1.jpg">
@@ -54,6 +86,8 @@ describe("ray JS lib", function() {
 
     });
 
+
+
     it("should work with 1 namespace", function() {
         const INITIAL_HTML=`
          <img data-ray-component="Namespace.ChangeImageSrcComponent" src="images/test1.jpg">
@@ -64,29 +98,6 @@ describe("ray JS lib", function() {
 
         window.Namespace={};
         window.Namespace.ChangeImageSrcComponent=function(data) {
-            const image=data.DOMElement;
-            image.setAttribute("src","images/test2.jpg");
-        };
-
-        fixture.append(INITIAL_HTML);
-
-        fireDOMReady();
-
-        expect(fixture.isEqual(EXPECTED_HTML)).toBeTruthy();
-    });
-
-    it("should work with 3 namespaces", function() {
-        const INITIAL_HTML=`
-         <img data-ray-component="NS1.NS2.NS3.ChangeImageSrcComponent" src="images/test1.jpg">
-         `;
-        const EXPECTED_HTML=`
-         <img data-ray-component="NS1.NS2.NS3.ChangeImageSrcComponent" src="images/test2.jpg" data-ray-component-executed>
-         `;
-
-        window.NS1={};
-        window.NS1.NS2={};
-        window.NS1.NS2.NS3={};
-        window.NS1.NS2.NS3.ChangeImageSrcComponent=function(data) {
             const image=data.DOMElement;
             image.setAttribute("src","images/test2.jpg");
         };
@@ -430,7 +441,8 @@ describe("ray JS lib", function() {
         };
 
         fixture.append(AFTER_HTML);
-        ray.getCommandDispatcher().loadNewComponents();
+        //ray.getCommandDispatcher()._executeNewComponents();
+        ray.bus.trigger(Ray.Commands.EXECUTE_NEW_COMPONENTS);
 
         expect(SampleCount).toBe(1);
 
@@ -462,7 +474,7 @@ describe("ray JS lib", function() {
             <img data-ray-component="NonExistentComponent" />
         `;
         fixture.append(INITIAL_HTML);
-        ray.eventBus.on("ray.error", function(exception){
+        ray.bus.on(Ray.Events.ERROR, function(exception){
             expect(exception instanceof Error).toBeTruthy();
             expect("<NonExistentComponent> JS object not Found").toBe(exception.message);
             done();

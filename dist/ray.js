@@ -135,6 +135,50 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var Commands = function () {
+    function Commands() {
+        _classCallCheck(this, Commands);
+    }
+
+    _createClass(Commands, null, [{
+        key: "EXECUTE_NEW_COMPONENTS",
+        get: function get() {
+            return "ray.command.execute-new-components";
+        }
+    }]);
+
+    return Commands;
+}();
+
+window.RayNS = window.RayNS || {};
+window.RayNS.Commands = Commands;"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Events = function () {
+    function Events() {
+        _classCallCheck(this, Events);
+    }
+
+    _createClass(Events, null, [{
+        key: "ERROR",
+        get: function get() {
+            return "ray.event.error";
+        }
+    }]);
+
+    return Events;
+}();
+
+window.RayNS = window.RayNS || {};
+window.RayNS.Events = Events;"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 var ComponentData = function () {
     function ComponentData(domElement, bus, commandDispatcher) {
         _classCallCheck(this, ComponentData);
@@ -231,17 +275,32 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Component = RayNS.Component;
+var Events = RayNS.Events;
+var Commands = RayNS.Commands;
 
 var CommandDispatcher = function () {
-    function CommandDispatcher(eventBus) {
+    function CommandDispatcher(bus) {
         _classCallCheck(this, CommandDispatcher);
 
-        this.eventBus = eventBus;
+        this.bus = bus;
     }
 
     _createClass(CommandDispatcher, [{
-        key: 'loadNewComponents',
-        value: function loadNewComponents() {
+        key: 'begin',
+        value: function begin() {
+            var self = this;
+            this.listenerToExecNewComponents = this.bus.on(Commands.EXECUTE_NEW_COMPONENTS, function () {
+                self._executeNewComponents();
+            });
+        }
+    }, {
+        key: 'end',
+        value: function end() {
+            this.bus.off(this.listenerToExecNewComponents);
+        }
+    }, {
+        key: '_executeNewComponents',
+        value: function _executeNewComponents() {
             var DATA_RAY_ATTR = RayNS.Component.DATA_RAY_ATTR;
             var self = this;
             return document.querySelectorAll('[' + DATA_RAY_ATTR + ']').forEach(function (domElement) {
@@ -252,10 +311,10 @@ var CommandDispatcher = function () {
                     }
                     domElement.setAttribute(EXECUTED_ATTRIBUTE, '');
 
-                    var component = Component.create(domElement, self.eventBus);
+                    var component = Component.create(domElement, self.bus);
                     component.execute();
                 } catch (e) {
-                    self.eventBus.trigger("ray.error", e);
+                    self.bus.trigger(Events.ERROR, e);
                     console.log('RayJS: Error loading components: ' + e.message);
                 }
             });
@@ -325,13 +384,22 @@ var Bus = function () {
                 return false;
             }
             var self = this;
-            setTimeout(function () {
-                var subscribers = self.topics[topic];
+
+            /*
+            setTimeout(() => {
+                const subscribers = self.topics[topic];
                 if (!subscribers) return;
-                subscribers.forEach(function (suscriber) {
+                subscribers.forEach(suscriber => {
                     suscriber.callback(args);
                 });
             }, 0);
+            */
+            var subscribers = self.topics[topic];
+            if (!subscribers) return;
+            subscribers.forEach(function (suscriber) {
+                suscriber.callback(args);
+            });
+
             return true;
         }
     }], [{
@@ -351,26 +419,29 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var Commands = RayNS.Commands;
+
 var Ray = function () {
     function Ray(eventNamesToListen) {
         _classCallCheck(this, Ray);
 
         this.eventNamesToListen = eventNamesToListen || { document: 'DOMContentLoaded', window: 'load' };
         this.raydocument = new RayNS.Document(this.eventNamesToListen);
-        this.eventBus = RayNS.Bus.create();
-        this.commandDispatcher = new RayNS.CommandDispatcher(this.eventBus);
+        this.bus = RayNS.Bus.create();
+        this.commandDispatcher = new RayNS.CommandDispatcher(this.bus);
     }
 
     _createClass(Ray, [{
         key: 'begin',
         value: function begin() {
+            this.commandDispatcher.begin();
             this.raydocument.begin();
             var self = this;
             this.raydocument.ready(function () {
-                self.commandDispatcher.loadNewComponents();
+                self.bus.trigger(Commands.EXECUTE_NEW_COMPONENTS);
             });
             this.intervalId = setInterval(function () {
-                self.commandDispatcher.loadNewComponents();
+                self.bus.trigger(Commands.EXECUTE_NEW_COMPONENTS);
             }, 400);
         }
     }, {
@@ -378,12 +449,8 @@ var Ray = function () {
         value: function end() {
             clearInterval(this.intervalId);
             this.raydocument.end();
-            this.eventBus.end();
-        }
-    }, {
-        key: 'getCommandDispatcher',
-        value: function getCommandDispatcher() {
-            return this.commandDispatcher;
+            this.bus.end();
+            this.commandDispatcher.end();
         }
     }], [{
         key: 'createBus',
@@ -394,6 +461,16 @@ var Ray = function () {
         key: 'createComponent',
         value: function createComponent(domElement, bus) {
             return RayNS.Component.create(domElement, bus);
+        }
+    }, {
+        key: 'Events',
+        get: function get() {
+            return RayNS.Events;
+        }
+    }, {
+        key: 'Commands',
+        get: function get() {
+            return RayNS.Commands;
         }
     }]);
 

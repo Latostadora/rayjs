@@ -43,6 +43,8 @@ class Bus {
             return false;
         }
         const self=this;
+
+        /*
         setTimeout(() => {
             const subscribers = self.topics[topic];
             if (!subscribers) return;
@@ -50,6 +52,13 @@ class Bus {
                 suscriber.callback(args);
             });
         }, 0);
+        */
+        const subscribers = self.topics[topic];
+        if (!subscribers) return;
+        subscribers.forEach(suscriber => {
+            suscriber.callback(args);
+        });
+
         return true;
     }
 

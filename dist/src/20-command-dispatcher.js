@@ -5,17 +5,32 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Component = RayNS.Component;
+var Events = RayNS.Events;
+var Commands = RayNS.Commands;
 
 var CommandDispatcher = function () {
-    function CommandDispatcher(eventBus) {
+    function CommandDispatcher(bus) {
         _classCallCheck(this, CommandDispatcher);
 
-        this.eventBus = eventBus;
+        this.bus = bus;
     }
 
     _createClass(CommandDispatcher, [{
-        key: 'loadNewComponents',
-        value: function loadNewComponents() {
+        key: 'begin',
+        value: function begin() {
+            var self = this;
+            this.listenerToExecNewComponents = this.bus.on(Commands.EXECUTE_NEW_COMPONENTS, function () {
+                self._executeNewComponents();
+            });
+        }
+    }, {
+        key: 'end',
+        value: function end() {
+            this.bus.off(this.listenerToExecNewComponents);
+        }
+    }, {
+        key: '_executeNewComponents',
+        value: function _executeNewComponents() {
             var DATA_RAY_ATTR = RayNS.Component.DATA_RAY_ATTR;
             var self = this;
             return document.querySelectorAll('[' + DATA_RAY_ATTR + ']').forEach(function (domElement) {
@@ -26,10 +41,10 @@ var CommandDispatcher = function () {
                     }
                     domElement.setAttribute(EXECUTED_ATTRIBUTE, '');
 
-                    var component = Component.create(domElement, self.eventBus);
+                    var component = Component.create(domElement, self.bus);
                     component.execute();
                 } catch (e) {
-                    self.eventBus.trigger("ray.error", e);
+                    self.bus.trigger(Events.ERROR, e);
                     console.log('RayJS: Error loading components: ' + e.message);
                 }
             });

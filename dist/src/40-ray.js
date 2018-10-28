@@ -4,26 +4,29 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var Commands = RayNS.Commands;
+
 var Ray = function () {
     function Ray(eventNamesToListen) {
         _classCallCheck(this, Ray);
 
         this.eventNamesToListen = eventNamesToListen || { document: 'DOMContentLoaded', window: 'load' };
         this.raydocument = new RayNS.Document(this.eventNamesToListen);
-        this.eventBus = RayNS.Bus.create();
-        this.commandDispatcher = new RayNS.CommandDispatcher(this.eventBus);
+        this.bus = RayNS.Bus.create();
+        this.commandDispatcher = new RayNS.CommandDispatcher(this.bus);
     }
 
     _createClass(Ray, [{
         key: 'begin',
         value: function begin() {
+            this.commandDispatcher.begin();
             this.raydocument.begin();
             var self = this;
             this.raydocument.ready(function () {
-                self.commandDispatcher.loadNewComponents();
+                self.bus.trigger(Commands.EXECUTE_NEW_COMPONENTS);
             });
             this.intervalId = setInterval(function () {
-                self.commandDispatcher.loadNewComponents();
+                self.bus.trigger(Commands.EXECUTE_NEW_COMPONENTS);
             }, 400);
         }
     }, {
@@ -31,12 +34,8 @@ var Ray = function () {
         value: function end() {
             clearInterval(this.intervalId);
             this.raydocument.end();
-            this.eventBus.end();
-        }
-    }, {
-        key: 'getCommandDispatcher',
-        value: function getCommandDispatcher() {
-            return this.commandDispatcher;
+            this.bus.end();
+            this.commandDispatcher.end();
         }
     }], [{
         key: 'createBus',
@@ -48,6 +47,16 @@ var Ray = function () {
         value: function createComponent(domElement, bus) {
             return RayNS.Component.create(domElement, bus);
         }
+    }, {
+        key: 'Events',
+        get: function get() {
+            return RayNS.Events;
+        }
+    }, {
+        key: 'Commands',
+        get: function get() {
+            return RayNS.Commands;
+        }
     }]);
 
     return Ray;
@@ -55,5 +64,4 @@ var Ray = function () {
 
 window.RayNS = window.RayNS || {};
 window.RayNS.Ray = Ray;
-
 module.exports = Ray;

@@ -57,13 +57,22 @@ var Bus = function () {
                 return false;
             }
             var self = this;
-            setTimeout(function () {
-                var subscribers = self.topics[topic];
+
+            /*
+            setTimeout(() => {
+                const subscribers = self.topics[topic];
                 if (!subscribers) return;
-                subscribers.forEach(function (suscriber) {
+                subscribers.forEach(suscriber => {
                     suscriber.callback(args);
                 });
             }, 0);
+            */
+            var subscribers = self.topics[topic];
+            if (!subscribers) return;
+            subscribers.forEach(function (suscriber) {
+                suscriber.callback(args);
+            });
+
             return true;
         }
     }], [{
