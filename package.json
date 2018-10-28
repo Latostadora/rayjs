@@ -1,6 +1,6 @@
 {
   "name": "rayjs",
-  "version": "1.0.0",
+  "version": "0.9.0",
   "description": "`ray.js` is a library that checks the DOM for html components and execute its related js counterpart",
   "main": "index.js",
   "scripts": {
@@ -15,8 +15,8 @@
     "type": "git",
     "url": "git+https://github.com/Latostadora/rayjs.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "it@latostadora.com",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Latostadora/rayjs/issues"
   },
@@ -42,4 +42,3 @@
     "stryker": "^0.29.2"
   }
 }
-

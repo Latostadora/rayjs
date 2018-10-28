@@ -402,3 +402,5 @@ var Ray = function () {
 
 window.RayNS = window.RayNS || {};
 window.RayNS.Ray = Ray;
+
+module.exports = Ray;

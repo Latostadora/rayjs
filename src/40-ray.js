@@ -38,3 +38,5 @@ class Ray {
 
 window.RayNS=window.RayNS || {};
 window.RayNS.Ray=Ray;
+
+module.exports=Ray;
