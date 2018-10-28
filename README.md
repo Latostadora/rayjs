@@ -23,8 +23,7 @@ then, when your are ready to start looking for components, execute this:
 
 ```
 <script type="text/javascript">
-    var ray=new RayNS.Ray();
-    ray.begin();
+    new Ray().begin();
 </script>
 ```
 

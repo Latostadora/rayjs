@@ -8,7 +8,6 @@ require ("../src/events");
 describe("Country Component", function() {
 
     var fixture=new HtmlFixture();
-    var Ray=RayNS.Ray;
     var ray=new Ray();
 
     beforeEach(function() {

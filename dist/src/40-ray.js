@@ -4,8 +4,6 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Commands = RayNS.Commands;
-
 var Ray = function () {
     function Ray(eventNamesToListen) {
         _classCallCheck(this, Ray);
@@ -23,10 +21,10 @@ var Ray = function () {
             this.raydocument.begin();
             var self = this;
             this.raydocument.ready(function () {
-                self.bus.trigger(Commands.EXECUTE_NEW_COMPONENTS);
+                self.bus.trigger(RayNS.Commands.EXECUTE_NEW_COMPONENTS);
             });
             this.intervalId = setInterval(function () {
-                self.bus.trigger(Commands.EXECUTE_NEW_COMPONENTS);
+                self.bus.trigger(RayNS.Commands.EXECUTE_NEW_COMPONENTS);
             }, 400);
         }
     }, {
@@ -62,6 +60,5 @@ var Ray = function () {
     return Ray;
 }();
 
-window.RayNS = window.RayNS || {};
-window.RayNS.Ray = Ray;
+window.Ray = Ray;
 module.exports = Ray;

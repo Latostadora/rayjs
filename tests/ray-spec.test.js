@@ -18,7 +18,6 @@ describe("ray JS lib", function() {
 
     const EVENT_NAMES_IN_TEST = {document: 'DOMContentLoadedTest', window: 'loadTest'};
     const fixture=new HtmlFixture();
-    const Ray=RayNS.Ray;
     const ray=new Ray(EVENT_NAMES_IN_TEST);
 
     function createEvent(name) {

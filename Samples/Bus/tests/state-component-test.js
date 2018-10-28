@@ -7,7 +7,6 @@ require ("../src/events");
 describe("State Component", function() {
 
     var fixture=new HtmlFixture();
-    var Ray=RayNS.Ray;
     var ray=new Ray();
 
     beforeEach(function() {

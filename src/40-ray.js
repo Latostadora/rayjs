@@ -1,5 +1,3 @@
-const Commands=RayNS.Commands;
-
 class Ray {
 
     constructor(eventNamesToListen) {
@@ -14,10 +12,10 @@ class Ray {
         this.raydocument.begin();
         const self = this;
         this.raydocument.ready(() => {
-            self.bus.trigger(Commands.EXECUTE_NEW_COMPONENTS);
+            self.bus.trigger(RayNS.Commands.EXECUTE_NEW_COMPONENTS);
         });
         this.intervalId=setInterval(() => {
-            self.bus.trigger(Commands.EXECUTE_NEW_COMPONENTS);
+            self.bus.trigger(RayNS.Commands.EXECUTE_NEW_COMPONENTS);
         },400);
     }
 
@@ -45,6 +43,5 @@ class Ray {
     }
 }
 
-window.RayNS=window.RayNS || {};
-window.RayNS.Ray=Ray;
+window.Ray=Ray;
 module.exports=Ray;
