@@ -1,3 +1,8 @@
+const HtmlFixture = require('html-fixture');
+require ('../../../dist/ray');
+
+require ("../src/state-component");
+require ("../src/events");
 
 describe("State Component", function() {
 

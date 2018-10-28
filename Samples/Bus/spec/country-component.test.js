@@ -1,3 +1,9 @@
+const HtmlFixture = require('html-fixture');
+require ('../../../dist/ray');
+
+require ("../src/country-component");
+require ("../src/events");
+
 
 describe("Country Component", function() {
 

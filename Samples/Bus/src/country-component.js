@@ -18,6 +18,6 @@ CountryComponent.prototype.getCurrentCountry=function() {
     var selectedCountryOption = this.selectCountry.options[selectedCountryIndex];
     return selectedCountryOption.value;
 };
-
+window.CountryComponent=CountryComponent;
 
 

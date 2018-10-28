@@ -9,3 +9,4 @@ var StateComponent=function(data){
         }
     });
 };
+window.StateComponent=StateComponent;
