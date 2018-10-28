@@ -1,19 +1,11 @@
 class ComponentData {
-    constructor(domElement, bus, commandDispatcher) {
+    constructor(domElement, bus) {
         this.DOMElement = domElement;
         this.bus = bus;
-        this.commandDispatcher = commandDispatcher;
     }
 
-    _init() {
-        this.topics = {};
-        this.id = 0;
-    }
-
-    static create(domElement, bus, commandDispatcher) {
-        //TODO: quitar commandDispatcher.
-        //TODO: sustituir por un comando que tiramos al bus (ray.refresh)?
-        return new ComponentData(domElement, bus, commandDispatcher);
+    static create(domElement, bus) {
+        return new ComponentData(domElement, bus);
     }
 }
 
