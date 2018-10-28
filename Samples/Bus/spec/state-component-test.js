@@ -34,10 +34,8 @@ describe("State Component", function() {
         var component = Ray.createComponent(selectElement, bus);
         component.execute();
         bus.trigger(Events.COUNTRY_CHANGED, COUNTRY_VALUE);
-        setTimeout(function () {
-            expect(selectElement.style.display).toBe(STYLE_DISPLAY);
-            done();
-        }, 1);
+        expect(selectElement.style.display).toBe(STYLE_DISPLAY);
+        done();
     });
 
     it("should hide its content when COUNTRY_CHANGED to ES", function(done) {
@@ -56,10 +54,8 @@ describe("State Component", function() {
         var component = Ray.createComponent(selectElement, bus);
         component.execute();
         bus.trigger(Events.COUNTRY_CHANGED, COUNTRY_VALUE);
-        setTimeout(function () {
-            expect(selectElement.style.display).toBe(STYLE_DISPLAY);
-            done();
-        }, 1);
+        expect(selectElement.style.display).toBe(STYLE_DISPLAY);
+        done();
     });
 
 });
