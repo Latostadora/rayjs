@@ -1,5 +1,0 @@
-List of todo items:
-
-* Run Ray on HTML that doesn't exists on DOM Load (AJAX, for example)
-* Errors?
-* Mock DOM is ready

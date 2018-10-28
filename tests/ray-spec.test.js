@@ -1,7 +1,3 @@
-/*  TODO
-    AJAX
-*/
-
 require ('../src/05_array_foreachpolyfill');
 require ('../src/10-ray-document');
 require ('../src/11-commands');
