@@ -1,12 +1,12 @@
-require ('../src/05_array_foreachpolyfill');
-require ('../src/10-ray-document');
-require ('../src/11-commands');
-require ('../src/12-events');
-require ('../src/13-component-data');
-require ('../src/15-component');
-require ('../src/20-command-dispatcher');
-require ('../src/30-bus');
-require ('../src/40-ray');
+require ('../src/10_array_foreachpolyfill');
+require ('../src/20-ray-document');
+require ('../src/30-commands');
+require ('../src/40-events');
+require ('../src/50-component-data');
+require ('../src/60-component');
+require ('../src/70-command-dispatcher');
+require ('../src/80-bus');
+require ('../src/90-ray');
 
 const HtmlFixture = require('html-fixture');
 
