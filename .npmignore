@@ -1,9 +1,9 @@
 /src/
-/test/
+/tests/
 /.idea/
 /Samples/
 /node_modules/
 /logo/
 /dist/src/
+/dist/ray-min.js
 .babelrc
-

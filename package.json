@@ -1,5 +1,5 @@
 {
-  "name": "rayjs",
+  "name": "ray-js",
   "version": "0.9.0",
   "description": "`ray.js` is a library that checks the DOM for html components and execute its related js counterpart",
   "main": "index.js",
@@ -9,7 +9,8 @@
     "concatenate": "cat dist/src/*.js >dist/ray.js",
     "minify": "uglifyjs dist/ray.js --compress --mangle --output dist/ray-min.js",
     "build": "npm run clean && npm run transpile && npm run concatenate && npm run minify",
-    "test": "npm run build && jest"
+    "test": "npm run build && jest",
+    "publish": "npm test && npm publish"
   },
   "repository": {
     "type": "git",
@@ -24,21 +25,19 @@
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-jest": "^23.6.0",
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "uglify-js": "^3.4.9",
     "html-fixture": "^0.9.15",
     "jest": "^23.6.0",
     "regenerator-runtime": "^0.12.1",
+    "stryker": "^0.29.2",
     "stryker-api": "^0.21.4",
     "stryker-html-reporter": "^0.16.5",
     "stryker-javascript-mutator": "^0.10.2",
-    "stryker-jest-runner": "^1.2.4",
-    "uglify-js": "^3.4.9"
+    "stryker-jest-runner": "^1.2.4"
   },
   "jest": {
     "transform": {}
-  },
-  "dependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
-    "stryker": "^0.29.2"
   }
 }
