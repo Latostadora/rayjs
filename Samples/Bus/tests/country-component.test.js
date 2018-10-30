@@ -5,21 +5,20 @@ require ("../src/country-component");
 require ("../src/events");
 
 
-describe("Country Component", function() {
+describe("Country Component", () => {
 
-    var fixture=new HtmlFixture();
-    var ray=new Ray();
+    const fixture = new HtmlFixture();
 
-    beforeEach(function() {
+    beforeEach(() => {
         fixture.create();
     });
 
-    afterEach(function() {
+    afterEach(() => {
         fixture.destroy();
     });
 
-    it("should trigger COUNTRY_CHANGED event on component load with selected option value (DE)", function(done) {
-        var HTML = function () {/*
+    it("should trigger COUNTRY_CHANGED event on component load with selected option value (DE)", done => {
+        const HTML = () => {/*
             <select data-ray-component="CountryComponent">
                 <option label="Alemania" value="DE" selected="selected">Alemania</option>
                 <option label="España" value="ES">España</option>
@@ -27,21 +26,21 @@ describe("Country Component", function() {
             </select>
         */
         };
-        var COUNTRY_VALUE = "DE";
+        const COUNTRY_VALUE = "DE";
 
         fixture.append(HTML);
-        var bus = Ray.createBus();
-        bus.on(Events.COUNTRY_CHANGED, function (currentCountry) {
+        const bus = Ray.createBus();
+        bus.on(Events.COUNTRY_CHANGED, (currentCountry) => {
             expect(currentCountry).toBe(COUNTRY_VALUE);
             done();
         });
-        var selectElement = fixture.elementByTag("select");
-        var component = Ray.createComponent(selectElement, bus);
+        const selectElement = fixture.elementByTag("select");
+        const component = Ray.createComponent(selectElement, bus);
         component.execute();
     });
 
-    it("should trigger COUNTRY_CHANGED event on component load with selected option value (ES)", function(done) {
-        var HTML = function () {/*
+    it("should trigger COUNTRY_CHANGED event on component load with selected option value (ES)", done => {
+        const HTML = () => {/*
             <select data-ray-component="CountryComponent">
                 <option label="Alemania" value="DE">Alemania</option>
                 <option label="España" value="ES" selected="selected">España</option>
@@ -49,20 +48,20 @@ describe("Country Component", function() {
             </select>
         */
         };
-        var COUNTRY_VALUE = "ES";
+        const COUNTRY_VALUE = "ES";
         fixture.append(HTML);
-        var bus = Ray.createBus();
-        bus.on(Events.COUNTRY_CHANGED, function (currentCountry) {
+        const bus = Ray.createBus();
+        bus.on(Events.COUNTRY_CHANGED, (currentCountry) => {
             expect(currentCountry).toBe(COUNTRY_VALUE);
             done();
         });
-        var selectElement = fixture.elementByTag("select");
-        var component = Ray.createComponent(selectElement, bus);
+        const selectElement = fixture.elementByTag("select");
+        const component = Ray.createComponent(selectElement, bus);
         component.execute();
     });
 
-    it("should trigger COUNTRY_CHANGED with correct value event on selected city", function(done) {
-        fixture.append(function () {/*
+    it("should trigger COUNTRY_CHANGED with correct value event on selected city", done => {
+        fixture.append(() => {/*
             <select data-ray-component="CountryComponent">
                 <option label="Alemania" value="DE">Alemania</option>
                 <option label="España" value="ES" selected="selected">España</option>
@@ -71,12 +70,13 @@ describe("Country Component", function() {
         */
         });
 
-        var bus=Ray.createBus();
-        var selectElement = fixture.elementByTag("select");
-        var component=Ray.createComponent(selectElement, bus);
+
+        const bus = Ray.createBus();
+        const selectElement = fixture.elementByTag("select");
+        const component = Ray.createComponent(selectElement, bus);
         component.execute();
 
-        bus.on(Events.COUNTRY_CHANGED, function(currentCountry){
+        bus.on(Events.COUNTRY_CHANGED, (currentCountry) => {
             expect(currentCountry).toBe("DE");
             done();
         });

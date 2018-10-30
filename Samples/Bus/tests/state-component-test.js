@@ -6,20 +6,19 @@ require ("../src/events");
 
 describe("State Component", function() {
 
-    var fixture=new HtmlFixture();
-    var ray=new Ray();
+    const fixture = new HtmlFixture();
 
-    beforeEach(function() {
+    beforeEach(() => {
         fixture.create();
     });
 
-    afterEach(function() {
+    afterEach(() => {
         fixture.destroy();
     });
 
-    it("should show its content when COUNTRY_CHANGED to US", function(done) {
-        var COUNTRY_VALUE = "US";
-        var STYLE_DISPLAY = "inline";
+    it("should show its content when COUNTRY_CHANGED to US", (done)=> {
+        const COUNTRY_VALUE = "US";
+        const STYLE_DISPLAY = "inline";
         fixture.append(function () {/*
             <select data-ray-component="StateComponent">
                 <option label="Alabama" value="AL">Alabama</option>
@@ -28,18 +27,18 @@ describe("State Component", function() {
             </select>
         */
         });
-        var bus = Ray.createBus();
-        var selectElement = fixture.elementByTag("select");
-        var component = Ray.createComponent(selectElement, bus);
+        const bus = Ray.createBus();
+        const selectElement = fixture.elementByTag("select");
+        const component = Ray.createComponent(selectElement, bus);
         component.execute();
         bus.trigger(Events.COUNTRY_CHANGED, COUNTRY_VALUE);
         expect(selectElement.style.display).toBe(STYLE_DISPLAY);
         done();
     });
 
-    it("should hide its content when COUNTRY_CHANGED to ES", function(done) {
-        var COUNTRY_VALUE = "ES";
-        var STYLE_DISPLAY = "none";
+    it("should hide its content when COUNTRY_CHANGED to ES", (done)=> {
+        const COUNTRY_VALUE = "ES";
+        const STYLE_DISPLAY = "none";
         fixture.append(function () {/*
             <select data-ray-component="StateComponent">
                 <option label="Alabama" value="AL">Alabama</option>
@@ -48,9 +47,9 @@ describe("State Component", function() {
             </select>
         */
         });
-        var bus = Ray.createBus();
-        var selectElement = fixture.elementByTag("select");
-        var component = Ray.createComponent(selectElement, bus);
+        const bus = Ray.createBus();
+        const selectElement = fixture.elementByTag("select");
+        const component = Ray.createComponent(selectElement, bus);
         component.execute();
         bus.trigger(Events.COUNTRY_CHANGED, COUNTRY_VALUE);
         expect(selectElement.style.display).toBe(STYLE_DISPLAY);
