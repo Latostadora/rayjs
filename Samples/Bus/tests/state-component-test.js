@@ -1,5 +1,5 @@
 const HtmlFixture = require('html-fixture');
-require ('../../../dist/ray');
+require ('../../../dist/ray-min');
 
 require ("../src/state-component");
 require ("../src/events");
