@@ -9,7 +9,8 @@
 1. [Installation](#installation)
 2. [An overview](#an-overview)
 3. [Errors](#errors)
-4. [More examples](#more-examples)
+4. [Commands](#commands)
+5. [More examples](#more-examples)
 
 ## Installation
 
@@ -56,20 +57,29 @@ On every execution an component ```ray.js``` injects a data object containing 2 
 * DOMElement: a reference to the DOMElement that triggers the execution of the component
 * bus: a reference to an EventBus
 
-## EventBus
+## Bus
 
-The ```ray.js``` EventBus has two methods:
+The ```ray.js``` bus has two methods:
 
 * ```trigger(eventName, eventPayload)``` triggers an event with the corresponding payload
 * ```on(eventName, callbackFn)``` listen to an event an sets the callback function to be called when the event happens
 
 ## Errors
 
-```ray.js``` throws an "ray.error" event on the EventBus if it detects an Error with the Exception as the payload. You can catch the error with this sample code:
+```ray.js``` throws an Ray.Events.ERROR event on the EventBus if it detects an Error with the Exception as the payload. You can catch the error with this sample code:
+
 ```
-    ray.eventBus.on("ray.error", function(exception) {
+    ray.bus.on(Ray.Events.ERROR, function(exception) {
         console.log("Error:"+exception.message);
     };
+```
+
+## Commands 
+
+You can send a command to the ```ray.js``` bus to search & execute new components:
+
+```
+    ray.bus.trigger(Ray.Commands.EXECUTE_NEW_COMPONENTS);
 ```
 
 ## More examples
