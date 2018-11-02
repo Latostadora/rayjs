@@ -1,8 +1,8 @@
 {
-  "name": "ray-js",
-  "version": "0.9.0",
+  "name": "@latostadora/rayjs",
+  "version": "0.9.1",
   "description": "`ray.js` is a library that checks the DOM for html components and execute its related js counterpart",
-  "main": "index.js",
+  "main": "dist/ray.js",
   "scripts": {
     "clean": "rm -rf dist/*.* && rm -rf dist/src/*.*",
     "transpile": "babel src -d dist/src",
@@ -10,7 +10,7 @@
     "minify": "uglifyjs dist/ray.js --compress --mangle --output dist/ray-min.js",
     "build": "npm run clean && npm run transpile && npm run concatenate && npm run minify",
     "test": "npm run build && jest",
-    "publish": "npm test && npm publish"
+    "npmpublish": "npm test && npm publish --access=public"
   },
   "repository": {
     "type": "git",
