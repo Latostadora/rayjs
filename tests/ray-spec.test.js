@@ -477,27 +477,11 @@ describe("ray JS lib", function() {
         fireDOMReady();
     });
 
-    it("must create a new Bus", function() {
+    it("must execute a new Bus", function() {
         const bus = Ray.createBus();
 
         expect(bus).not.toBeNull();
         expect(bus instanceof RayNS.Bus).toBeTruthy();
-    });
-
-    it("must create a Component from domElement & bus", function() {
-        const INITIAL_HTML=`
-            <img data-ray-component="SampleComponent" />
-        `;
-        fixture.append(INITIAL_HTML);
-
-        window.SampleComponent=function(data) {
-
-        };
-
-        const bus = Ray.createBus();
-        const imageDomElement = fixture.elementByTag("img");
-        const componentCommand=Ray.createComponent(imageDomElement, bus);
-        expect(componentCommand instanceof RayNS.Component).toBeTruthy();
     });
 
     it("must execute a Component from domElement & bus", function(done) {
@@ -516,7 +500,6 @@ describe("ray JS lib", function() {
             done();
         };
 
-        const componentCommand=Ray.createComponent(imageDomElement, bus);
-        componentCommand.execute();
+        Ray.executeComponent(imageDomElement, bus);
     });
 });

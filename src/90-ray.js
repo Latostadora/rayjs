@@ -38,8 +38,8 @@ class Ray {
         return RayNS.Bus.create();
     }
 
-    static createComponent(domElement, bus) {
-        return RayNS.Component.create(domElement, bus);
+    static executeComponent(domElement, bus) {
+        RayNS.Component.execute(domElement, bus);
     }
 }
 

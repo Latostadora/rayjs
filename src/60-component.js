@@ -6,14 +6,14 @@ class Component {
     }
 
     execute() {
-        return new this.componentConstructorFn(this.data);
+        new this.componentConstructorFn(this.data);
     }
 
     static get DATA_RAY_ATTR() {
         return "data-ray-component";
     }
 
-    static create(domElement, bus) {
+    static execute(domElement, bus) {
 
 
         const getComponentName = (dataRayComponentAttrValue) => {
@@ -41,7 +41,8 @@ class Component {
         if (componentConstructorFn===undefined) {
             throw new Error(`<${componentName}> JS object not Found`);
         }
-        return new Component(componentConstructorFn, data);
+        const component= new Component(componentConstructorFn, data);
+        component.execute();
     }
 }
 

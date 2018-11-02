@@ -35,8 +35,7 @@ describe("Country Component", () => {
             done();
         });
         const selectElement = fixture.elementByTag("select");
-        const component = Ray.createComponent(selectElement, bus);
-        component.execute();
+        Ray.executeComponent(selectElement, bus);
     });
 
     it("should trigger COUNTRY_CHANGED event on component load with selected option value (ES)", done => {
@@ -56,8 +55,7 @@ describe("Country Component", () => {
             done();
         });
         const selectElement = fixture.elementByTag("select");
-        const component = Ray.createComponent(selectElement, bus);
-        component.execute();
+        Ray.executeComponent(selectElement, bus);
     });
 
     it("should trigger COUNTRY_CHANGED with correct value event on selected city", done => {
@@ -73,8 +71,7 @@ describe("Country Component", () => {
 
         const bus = Ray.createBus();
         const selectElement = fixture.elementByTag("select");
-        const component = Ray.createComponent(selectElement, bus);
-        component.execute();
+        Ray.executeComponent(selectElement, bus);
 
         bus.on(Events.COUNTRY_CHANGED, (currentCountry) => {
             expect(currentCountry).toBe("DE");

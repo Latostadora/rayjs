@@ -30,7 +30,7 @@ class CommandDispatcher {
                 }
                 domElement.setAttribute(EXECUTED_ATTRIBUTE, '');
 
-                const component=Component.create(domElement, self.bus);
+                const component=Component.execute(domElement, self.bus);
                 component.execute();
             } catch (e) {
                 self.bus.trigger(Events.ERROR, e);

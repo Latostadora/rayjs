@@ -215,11 +215,11 @@ var Component = function () {
     _createClass(Component, [{
         key: "execute",
         value: function execute() {
-            return new this.componentConstructorFn(this.data);
+            new this.componentConstructorFn(this.data);
         }
     }], [{
-        key: "create",
-        value: function create(domElement, bus) {
+        key: "execute",
+        value: function execute(domElement, bus) {
 
             var getComponentName = function getComponentName(dataRayComponentAttrValue) {
                 var namespaces = dataRayComponentAttrValue.split(".");
@@ -246,7 +246,8 @@ var Component = function () {
             if (componentConstructorFn === undefined) {
                 throw new Error("<" + componentName + "> JS object not Found");
             }
-            return new Component(componentConstructorFn, data);
+            var component = new Component(componentConstructorFn, data);
+            component.execute();
         }
     }, {
         key: "DATA_RAY_ATTR",
@@ -302,7 +303,7 @@ var CommandDispatcher = function () {
                     }
                     domElement.setAttribute(EXECUTED_ATTRIBUTE, '');
 
-                    var component = Component.create(domElement, self.bus);
+                    var component = Component.execute(domElement, self.bus);
                     component.execute();
                 } catch (e) {
                     self.bus.trigger(Events.ERROR, e);
@@ -436,9 +437,9 @@ var Ray = function () {
             return RayNS.Bus.create();
         }
     }, {
-        key: 'createComponent',
-        value: function createComponent(domElement, bus) {
-            return RayNS.Component.create(domElement, bus);
+        key: 'executeComponent',
+        value: function executeComponent(domElement, bus) {
+            RayNS.Component.execute(domElement, bus);
         }
     }, {
         key: 'Events',

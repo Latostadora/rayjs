@@ -29,11 +29,11 @@ describe("State Component", function() {
         });
         const bus = Ray.createBus();
         const selectElement = fixture.elementByTag("select");
-        const component = Ray.createComponent(selectElement, bus);
-        component.execute();
+        Ray.executeComponent(selectElement, bus);
         bus.trigger(Events.COUNTRY_CHANGED, COUNTRY_VALUE);
         expect(selectElement.style.display).toBe(STYLE_DISPLAY);
         done();
+
     });
 
     it("should hide its content when COUNTRY_CHANGED to ES", (done)=> {
@@ -49,8 +49,7 @@ describe("State Component", function() {
         });
         const bus = Ray.createBus();
         const selectElement = fixture.elementByTag("select");
-        const component = Ray.createComponent(selectElement, bus);
-        component.execute();
+        Ray.executeComponent(selectElement, bus);
         bus.trigger(Events.COUNTRY_CHANGED, COUNTRY_VALUE);
         expect(selectElement.style.display).toBe(STYLE_DISPLAY);
         done();
