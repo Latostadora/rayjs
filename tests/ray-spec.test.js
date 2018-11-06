@@ -502,4 +502,20 @@ describe("ray JS lib", function() {
 
         Ray.executeComponent(imageDomElement, bus);
     });
+
+    it("must render a template from String", function() {
+        ray.end();
+        const TEMPLATE_STRING="<b>{{name}}</b><i>{{surname}}</i>";
+        const MODEL={name: "Carlos", surname: "Gil"};
+        const html=Ray.renderHtmlFromString(TEMPLATE_STRING, MODEL);
+        expect(html).toBe("<b>Carlos</b><i>Gil</i>");
+    });
+
+    it("must render a template from url", function() {
+        ray.end();
+        const TEMPLATE_URL="/tests/template.hbs";
+        const MODEL={name: "Carlos", surname: "Gil"};
+        const html=Ray.renderHtmlFromUrl(TEMPLATE_URL, MODEL);
+        expect(html).toBe("<b>Carlos</b><i>Gil</i>");
+    });
 });

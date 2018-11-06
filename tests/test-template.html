@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Template Test</title>
+    <script src="../node_modules/handlebars/dist/handlebars.js"></script>
+    <script src="../dist/ray.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="renderedHtml">
+
+</div>
+<textarea name="template" id="template" cols="80" rows="20">
+
+</textarea>
+<script type="text/javascript">
+    var templateUrl="/rayjs/tests/template.hbs";
+    var model= {
+        name: "Carlos",
+        surname: "Gil"
+    };
+
+    var renderedHtmlElement = document.getElementById("renderedHtml");
+
+    var onRenderHtml=Ray.renderHtmlFromUrl(templateUrl, model);
+    onRenderHtml.then(function(renderedHtml){
+        renderedHtmlElement.innerHTML=renderedHtml;
+    }).catch(function(errorMessage){
+        renderedHtmlElement.innerHTML=errorMessage;
+    });
+</script>
+</body>
+</html>

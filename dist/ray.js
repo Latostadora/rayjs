@@ -442,6 +442,30 @@ var Ray = function () {
             RayNS.Component.execute(domElement, bus);
         }
     }, {
+        key: 'renderHtmlFromString',
+        value: function renderHtmlFromString(template, model) {
+            var compiledTemplate = Handlebars.compile(template);
+            return compiledTemplate(model);
+        }
+    }, {
+        key: 'renderHtmlFromUrl',
+        value: function renderHtmlFromUrl(templateUrl, model) {
+            var promise = new Promise(function (resolve, reject) {
+                fetch(templateUrl).then(function (response) {
+                    if (!response.ok) {
+                        reject(response.statusText);
+                    }
+                    return response.text().then(function (templateString) {
+                        var renderedHtml = Ray.renderHtmlFromString(templateString, model);
+                        resolve(renderedHtml);
+                    });
+                }).catch(function (errorMessage) {
+                    reject(errorMessage);
+                });
+            });
+            return promise;
+        }
+    }, {
         key: 'Events',
         get: function get() {
             return RayNS.Events;

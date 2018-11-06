@@ -41,6 +41,30 @@ class Ray {
     static executeComponent(domElement, bus) {
         RayNS.Component.execute(domElement, bus);
     }
+
+    static renderHtmlFromString(template, model){
+        const compiledTemplate = Handlebars.compile(template);
+        return compiledTemplate(model);
+    }
+
+    static renderHtmlFromUrl(templateUrl, model) {
+       const promise=new Promise((resolve, reject) => {
+           fetch(templateUrl)
+               .then(function(response) {
+                   if (!response.ok){
+                       reject(response.statusText);
+                   }
+                   return response.text().then(function(templateString) {
+                       const renderedHtml=Ray.renderHtmlFromString(templateString, model);
+                       resolve(renderedHtml);
+                   });
+               })
+               .catch(errorMessage => {
+                   reject(errorMessage);
+               });
+       });
+       return promise;
+    }
 }
 
 window.Ray=Ray;
