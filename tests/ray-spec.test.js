@@ -9,6 +9,7 @@ require ('../src/80-bus');
 require ('../src/90-ray');
 
 const HtmlFixture = require('html-fixture');
+window.Handlebars= require('handlebars');
 
 describe("ray JS lib", function() {
 
@@ -511,11 +512,37 @@ describe("ray JS lib", function() {
         expect(html).toBe("<b>Carlos</b><i>Gil</i>");
     });
 
-    it("must render a template from url", function() {
+/*    it("must render a template from url", function() {
         ray.end();
         const TEMPLATE_URL="/tests/template.hbs";
         const MODEL={name: "Carlos", surname: "Gil"};
         const html=Ray.renderHtmlFromUrl(TEMPLATE_URL, MODEL);
         expect(html).toBe("<b>Carlos</b><i>Gil</i>");
+    });*/
+
+    it("must throw an exception if HandleBars is not loaded when render string", function() {
+        const handleBars=window.Handlebars;
+        try {
+            window.Handlebars=undefined;
+            const ERROR_MESSAGE = "HandleBars object is not present. You need to load HandleBars before this";
+            expect(()=>{
+                Ray.renderHtmlFromString();
+            }).toThrow(new Error(ERROR_MESSAGE));
+        } finally {
+            window.Handlebars=handleBars;
+        }
+    });
+
+    it("must throw an exception if HandleBars is not loaded when render from url", function() {
+        const handleBars=window.Handlebars;
+        try {
+            window.Handlebars=undefined;
+            const ERROR_MESSAGE = "HandleBars object is not present. You need to load HandleBars before this";
+            expect(()=>{
+                Ray.renderHtmlFromUrl();
+            }).toThrow(new Error(ERROR_MESSAGE));
+        } finally {
+            window.Handlebars=handleBars;
+        }
     });
 });

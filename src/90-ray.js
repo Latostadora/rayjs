@@ -42,12 +42,27 @@ class Ray {
         RayNS.Component.execute(domElement, bus);
     }
 
+    static checkHandlebarsPresence() {
+
+    }
+
+    static get HANDLEBARS_NOT_LOADED_ERROR_MESSAGE() {
+        return "HandleBars object is not present. You need to load HandleBars before this";
+    }
     static renderHtmlFromString(template, model){
+        Ray.checkHandlebarsIsPresent();
         const compiledTemplate = Handlebars.compile(template);
         return compiledTemplate(model);
     }
 
+    static checkHandlebarsIsPresent() {
+        if (window.Handlebars === undefined) {
+            throw new Error(Ray.HANDLEBARS_NOT_LOADED_ERROR_MESSAGE);
+        }
+    }
+
     static renderHtmlFromUrl(templateUrl, model) {
+       Ray.checkHandlebarsIsPresent();
        const promise=new Promise((resolve, reject) => {
            fetch(templateUrl)
                .then(function(response) {
