@@ -442,22 +442,34 @@ var Ray = function () {
             RayNS.Component.execute(domElement, bus);
         }
     }, {
+        key: 'checkHandlebarsPresence',
+        value: function checkHandlebarsPresence() {}
+    }, {
         key: 'renderHtmlFromString',
         value: function renderHtmlFromString(template, model) {
+            Ray.checkHandlebarsIsPresent();
             var compiledTemplate = Handlebars.compile(template);
             return compiledTemplate(model);
         }
     }, {
+        key: 'checkHandlebarsIsPresent',
+        value: function checkHandlebarsIsPresent() {
+            if (window.Handlebars === undefined) {
+                throw new Error(Ray.HANDLEBARS_NOT_LOADED_ERROR_MESSAGE);
+            }
+        }
+    }, {
         key: 'renderHtmlFromUrl',
         value: function renderHtmlFromUrl(templateUrl, model) {
+            Ray.checkHandlebarsIsPresent();
             var promise = new Promise(function (resolve, reject) {
                 fetch(templateUrl).then(function (response) {
                     if (!response.ok) {
                         reject(response.statusText);
+                        return;
                     }
-                    return response.text().then(function (templateString) {
-                        var renderedHtml = Ray.renderHtmlFromString(templateString, model);
-                        resolve(renderedHtml);
+                    response.text().then(function (templateString) {
+                        resolve(Ray.renderHtmlFromString(templateString, model));
                     });
                 }).catch(function (errorMessage) {
                     reject(errorMessage);
@@ -474,6 +486,11 @@ var Ray = function () {
         key: 'Commands',
         get: function get() {
             return RayNS.Commands;
+        }
+    }, {
+        key: 'HANDLEBARS_NOT_LOADED_ERROR_MESSAGE',
+        get: function get() {
+            return "HandleBars object is not present. You need to load HandleBars before this";
         }
     }]);
 
