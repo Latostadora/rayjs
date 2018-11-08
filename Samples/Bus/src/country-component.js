@@ -2,6 +2,14 @@ var CountryComponent=function(data){
     this.selectCountry=data.DOMElement;
     var bus = data.bus;
 
+    var attributes = data.attributes;
+    if(attributes !== undefined) {
+        var background = attributes.background;
+        if(background !== undefined) {
+            this.selectCountry.style.backgroundColor = background;
+        }
+    }
+
     var self=this;
     setTimeout(function(){
         bus.trigger(Events.COUNTRY_CHANGED, self.getCurrentCountry());

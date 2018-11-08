@@ -185,6 +185,10 @@ var ComponentData = function () {
 
         this.DOMElement = domElement;
         this.bus = bus;
+        this.attributes = domElement.dataset.rayAttributes;
+        if (this.attributes !== undefined) {
+            this.attributes = JSON.parse(this.attributes);
+        }
     }
 
     _createClass(ComponentData, null, [{
