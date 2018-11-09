@@ -84,7 +84,7 @@ describe("Country Component", () => {
         fixture.append(() => {/*
             <select
                 data-ray-component="CountryComponent"
-                data-ray-attributes='{"background":"red"}'
+                data-ray-params='{"background":"red"}'
             >
                 <option label="Alemania" value="DE">Alemania</option>
                 <option label="España" value="ES" selected="selected">España</option>

@@ -502,4 +502,60 @@ describe("ray JS lib", function() {
 
         Ray.executeComponent(imageDomElement, bus);
     });
+
+    it("must execute a Component with params", function (done) {
+        const INITIAL_HTML=`
+            <img data-ray-component="SampleComponent" data-ray-params='{"sampleVariable":"sampleValue"}' />
+        `;
+
+        fixture.append(INITIAL_HTML);
+
+        const bus = Ray.createBus();
+        const imageDomElement = fixture.elementByTag("img");
+
+        window.SampleComponent=function(data) {
+            expect(data.params.sampleVariable).toBe("sampleValue");
+            done();
+        };
+
+        Ray.executeComponent(imageDomElement, bus);
+    });
+
+    it("must execute a Component with params like array", function (done) {
+        const INITIAL_HTML=`
+            <img data-ray-component="SampleComponent" data-ray-params='["red","green","blue"]' />
+        `;
+
+        fixture.append(INITIAL_HTML);
+
+        const bus = Ray.createBus();
+        const imageDomElement = fixture.elementByTag("img");
+
+        window.SampleComponent=function(data) {
+            expect(data.params.length).toBe(3);
+            expect(data.params[0]).toBe("red");
+            expect(data.params[1]).toBe("green");
+            expect(data.params[2]).toBe("blue");
+            done();
+        };
+
+        Ray.executeComponent(imageDomElement, bus);
+    });
+
+    it("must execute a Component with invalid params", function () {
+        expect(function() {
+            const INITIAL_HTML = `
+                <img data-ray-component="SampleComponent" data-ray-params='invalidValue' />
+            `;
+
+            fixture.append(INITIAL_HTML);
+
+            const bus = Ray.createBus();
+            const imageDomElement = fixture.elementByTag("img");
+
+            Ray.executeComponent(imageDomElement, bus);
+        }).toThrow(
+            new Error("The params are not correct")
+        );
+    });
 });

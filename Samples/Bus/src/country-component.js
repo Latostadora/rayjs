@@ -2,13 +2,7 @@ var CountryComponent=function(data){
     this.selectCountry=data.DOMElement;
     var bus = data.bus;
 
-    var attributes = data.attributes;
-    if(attributes !== undefined) {
-        var background = attributes.background;
-        if(background !== undefined) {
-            this.selectCountry.style.backgroundColor = background;
-        }
-    }
+    this.selectCountry.style.backgroundColor = data.params.background;
 
     var self=this;
     setTimeout(function(){

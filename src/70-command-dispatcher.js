@@ -1,4 +1,3 @@
-
 const Component=RayNS.Component;
 const Events=RayNS.Events;
 const Commands=RayNS.Commands;
@@ -12,11 +11,15 @@ class CommandDispatcher {
         const self=this;
         this.listenerToExecNewComponents=this.bus.on(Commands.EXECUTE_NEW_COMPONENTS, ()=>{
             self._executeNewComponents();
-        })
+        });
+        this.listenerToCatchError = this.bus.on(Events.ERROR, (e) => {
+            console.log(`RayJS: Error loading components: ${e}`);
+        });
     }
 
     end() {
         this.bus.off(this.listenerToExecNewComponents);
+        this.bus.off(this.listenerToCatchError);
     }
 
     _executeNewComponents() {
@@ -34,7 +37,6 @@ class CommandDispatcher {
                 component.execute();
             } catch (e) {
                 self.bus.trigger(Events.ERROR, e);
-                console.log(`RayJS: Error loading components: ${e.message}`);
             }
         });
     }

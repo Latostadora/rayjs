@@ -288,11 +288,15 @@ var CommandDispatcher = function () {
             this.listenerToExecNewComponents = this.bus.on(Commands.EXECUTE_NEW_COMPONENTS, function () {
                 self._executeNewComponents();
             });
+            this.listenerToCatchError = this.bus.on(Events.ERROR, function (e) {
+                console.log('RayJS: Error loading components: ' + e);
+            });
         }
     }, {
         key: 'end',
         value: function end() {
             this.bus.off(this.listenerToExecNewComponents);
+            this.bus.off(this.listenerToCatchError);
         }
     }, {
         key: '_executeNewComponents',
@@ -311,7 +315,6 @@ var CommandDispatcher = function () {
                     component.execute();
                 } catch (e) {
                     self.bus.trigger(Events.ERROR, e);
-                    console.log('RayJS: Error loading components: ' + e.message);
                 }
             });
         }
