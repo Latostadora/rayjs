@@ -289,7 +289,7 @@ var CommandDispatcher = function () {
                 self._executeNewComponents();
             });
             this.listenerToCatchError = this.bus.on(Events.ERROR, function (e) {
-                console.log('RayJS: Error loading components: ' + e);
+                console.error('RayJS: Error loading components: ' + e);
             });
         }
     }, {

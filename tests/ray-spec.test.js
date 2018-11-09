@@ -542,10 +542,27 @@ describe("ray JS lib", function() {
         Ray.executeComponent(imageDomElement, bus);
     });
 
-    it("must execute a Component with invalid params", function () {
+    it("must throw error to execute a Component with invalid params", function () {
         expect(function() {
             const INITIAL_HTML = `
                 <img data-ray-component="SampleComponent" data-ray-params='invalidValue' />
+            `;
+
+            fixture.append(INITIAL_HTML);
+
+            const bus = Ray.createBus();
+            const imageDomElement = fixture.elementByTag("img");
+
+            Ray.executeComponent(imageDomElement, bus);
+        }).toThrow(
+            new Error("The params are not correct")
+        );
+    });
+
+    it("must throw error to execute a Component with empty params", function () {
+        expect(function() {
+            const INITIAL_HTML = `
+                <img data-ray-component="SampleComponent" data-ray-params='' />
             `;
 
             fixture.append(INITIAL_HTML);

@@ -13,7 +13,7 @@ class CommandDispatcher {
             self._executeNewComponents();
         });
         this.listenerToCatchError = this.bus.on(Events.ERROR, (e) => {
-            console.log(`RayJS: Error loading components: ${e}`);
+            console.error(`RayJS: Error loading components: ${e}`);
         });
     }
 

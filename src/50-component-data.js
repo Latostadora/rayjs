@@ -5,15 +5,22 @@ class ComponentData {
         this.DOMElement = domElement;
         this.bus = bus;
         this.params = domElement.dataset.rayParams;
-        if(this.params !== undefined) {
-            if(this.isJSON(this.params)) {
-                this.params = JSON.parse(this.params);
-            } else {
-                this.params = {};
-                throw new Error("The params are not correct");
-            }
+
+        if(this.params === undefined) {
+            this.params = {};
+            return;
+        }
+
+        if(this.params === null) {
+            this.params = {};
+            return;
+        }
+
+        if(this.isJSON(this.params)) {
+            this.params = JSON.parse(this.params);
         } else {
             this.params = {};
+            throw new Error("The params are not correct");
         }
     }
 
@@ -25,7 +32,12 @@ class ComponentData {
         if(json === undefined) {
             return false;
         }
+
         if(json === null) {
+            return false;
+        }
+
+        if(json === "") {
             return false;
         }
 
