@@ -443,26 +443,6 @@ describe("ray JS lib", function() {
 
     });
 
-    /*
-        it("should pass a CommandDispatcher to a component constructor", function(done) {
-            const INITIAL_HTML=function(){/!*
-             <img data-ray-component="SampleComponent" />
-             *!/};
-
-            const SampleComponent=function(data) {
-                expect(data.commandDispatcher).not.toBeNull();
-                expect(data.commandDispatcher instanceof RayNS.CommandDispatcher).toBeTruthy();
-                done();
-            };
-
-            window.SampleComponent=SampleComponent;
-
-            fixture.append(INITIAL_HTML);
-
-            fireDOMReady();
-
-        });
-    */
 
     it("should send a 'ray.error' event if component doesn't exists", function(done) {
         const INITIAL_HTML=`
@@ -477,7 +457,7 @@ describe("ray JS lib", function() {
         fireDOMReady();
     });
 
-    it("must execute a new Bus", function() {
+    it("must create a new Bus", function() {
         const bus = Ray.createBus();
 
         expect(bus).not.toBeNull();
@@ -503,7 +483,7 @@ describe("ray JS lib", function() {
         Ray.executeComponent(imageDomElement, bus);
     });
 
-    it("must execute a Component with params", function (done) {
+    it("must pass a simple param to a component", function (done) {
         const INITIAL_HTML=`
             <img data-ray-component="SampleComponent" data-ray-params='{"sampleVariable":"sampleValue"}' />
         `;
@@ -521,7 +501,7 @@ describe("ray JS lib", function() {
         Ray.executeComponent(imageDomElement, bus);
     });
 
-    it("must execute a Component with params like array", function (done) {
+    it("must pass array param to component", function (done) {
         const INITIAL_HTML=`
             <img data-ray-component="SampleComponent" data-ray-params='["red","green","blue"]' />
         `;
@@ -542,7 +522,7 @@ describe("ray JS lib", function() {
         Ray.executeComponent(imageDomElement, bus);
     });
 
-    it("must throw error to execute a Component with invalid params", function () {
+    it("must throw an error when a component receives invalid param", function () {
         expect(function() {
             const INITIAL_HTML = `
                 <img data-ray-component="SampleComponent" data-ray-params='invalidValue' />
@@ -555,7 +535,7 @@ describe("ray JS lib", function() {
 
             Ray.executeComponent(imageDomElement, bus);
         }).toThrow(
-            new Error("The params are not correct")
+            new Error ("Invalid JSON syntax in data-ray-params: 'invalidValue'")
         );
     });
 
@@ -572,7 +552,31 @@ describe("ray JS lib", function() {
 
             Ray.executeComponent(imageDomElement, bus);
         }).toThrow(
-            new Error("The params are not correct")
+            new Error("Invalid JSON syntax in data-ray-params: ''")
         );
     });
+
+    it("must return an empty object if params does't exists", function (done) {
+
+            const isEmptyObject= obj => Object.keys(obj).length === 0 && obj.constructor === Object;
+
+            const INITIAL_HTML = `
+                <img data-ray-component="SampleComponent" />
+            `;
+
+            fixture.append(INITIAL_HTML);
+
+            const bus = Ray.createBus();
+            const imageDomElement = fixture.elementByTag("img");
+
+            window.SampleComponent=function(data) {
+                expect(isEmptyObject(data.params)).toBeTruthy();
+                done();
+            };
+
+            Ray.executeComponent(imageDomElement, bus);
+    });
+
+
 });
+

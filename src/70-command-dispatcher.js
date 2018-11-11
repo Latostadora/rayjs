@@ -13,7 +13,7 @@ class CommandDispatcher {
             self._executeNewComponents();
         });
         this.listenerToCatchError = this.bus.on(Events.ERROR, (e) => {
-            console.error(`RayJS: Error loading components: ${e}`);
+            console.error(`RayJS Error: ${e.stack}`);
         });
     }
 
@@ -33,8 +33,7 @@ class CommandDispatcher {
                 }
                 domElement.setAttribute(EXECUTED_ATTRIBUTE, '');
 
-                const component=Component.execute(domElement, self.bus);
-                component.execute();
+                Component.execute(domElement, self.bus);
             } catch (e) {
                 self.bus.trigger(Events.ERROR, e);
             }

@@ -4,46 +4,22 @@ class ComponentData {
     constructor(domElement, bus) {
         this.DOMElement = domElement;
         this.bus = bus;
-        this.params = domElement.dataset.rayParams;
-
-        if(this.params === undefined) {
-            this.params = {};
+        this.params = {};
+        let domParams = domElement.dataset.rayParams;
+        if (domParams==undefined) {
             return;
         }
-
-        if(this.params === null) {
+        try {
+            this.params=JSON.parse(domParams)
+        } catch (e) {
             this.params = {};
-            return;
-        }
-
-        if(this.isJSON(this.params)) {
-            this.params = JSON.parse(this.params);
-        } else {
-            this.params = {};
-            throw new Error("The params are not correct");
+            const errorMessage = "Invalid JSON syntax in data-ray-params: '"+ domParams+"'";
+            throw new Error(errorMessage);
         }
     }
 
     static create(domElement, bus) {
         return new ComponentData(domElement, bus);
-    }
-
-    isJSON(json) {
-        if(json === undefined) {
-            return false;
-        }
-
-        if(json === null) {
-            return false;
-        }
-
-        if(json === "") {
-            return false;
-        }
-
-        return (/^[\],:{}\s]*$/.test(json.replace(/\\["\\\/bfnrtu]/g, '@').
-        replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').
-        replace(/(?:^|:|,)(?:\s*\[)+/g, '')));
     }
 }
 

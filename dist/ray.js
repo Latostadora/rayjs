@@ -179,15 +179,25 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var Events = RayNS.Events;
+
 var ComponentData = function () {
     function ComponentData(domElement, bus) {
         _classCallCheck(this, ComponentData);
 
         this.DOMElement = domElement;
         this.bus = bus;
-        this.attributes = domElement.dataset.rayAttributes;
-        if (this.attributes !== undefined) {
-            this.attributes = JSON.parse(this.attributes);
+        this.params = {};
+        var domParams = domElement.dataset.rayParams;
+        if (domParams == undefined) {
+            return;
+        }
+        try {
+            this.params = JSON.parse(domParams);
+        } catch (e) {
+            this.params = {};
+            var errorMessage = "Invalid JSON syntax in data-ray-params: '" + domParams + "'";
+            throw new Error(errorMessage);
         }
     }
 
@@ -289,7 +299,7 @@ var CommandDispatcher = function () {
                 self._executeNewComponents();
             });
             this.listenerToCatchError = this.bus.on(Events.ERROR, function (e) {
-                console.error('RayJS: Error loading components: ' + e);
+                console.error('RayJS Error: ' + e.stack);
             });
         }
     }, {
@@ -311,8 +321,7 @@ var CommandDispatcher = function () {
                     }
                     domElement.setAttribute(EXECUTED_ATTRIBUTE, '');
 
-                    var component = Component.execute(domElement, self.bus);
-                    component.execute();
+                    Component.execute(domElement, self.bus);
                 } catch (e) {
                     self.bus.trigger(Events.ERROR, e);
                 }
