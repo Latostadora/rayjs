@@ -15,7 +15,6 @@ class Component {
 
     static execute(domElement, bus) {
 
-
         const getComponentName = (dataRayComponentAttrValue) => {
             const namespaces = dataRayComponentAttrValue.split(".");
             return namespaces.pop();
@@ -41,7 +40,7 @@ class Component {
         if (componentConstructorFn===undefined) {
             throw new Error(`<${componentName}> JS object not Found`);
         }
-        const component= new Component(componentConstructorFn, data);
+        const component = new Component(componentConstructorFn, data);
         component.execute();
     }
 }

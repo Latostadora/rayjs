@@ -195,7 +195,6 @@ var ComponentData = function () {
         try {
             this.params = JSON.parse(domParams);
         } catch (e) {
-            this.params = {};
             var errorMessage = "Invalid JSON syntax in data-ray-params: '" + domParams + "'";
             throw new Error(errorMessage);
         }
