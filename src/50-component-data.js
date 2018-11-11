@@ -18,6 +18,7 @@ class ComponentData {
 
         if(this.isJSON(this.params)) {
             this.params = JSON.parse(this.params);
+            this.DOMElement.removeAttribute('data-ray-params');
         } else {
             this.params = {};
             throw new Error("The params are not correct");
