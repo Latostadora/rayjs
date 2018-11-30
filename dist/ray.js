@@ -179,15 +179,38 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var Events = RayNS.Events;
+
 var ComponentData = function () {
     function ComponentData(domElement, bus) {
         _classCallCheck(this, ComponentData);
 
         this.DOMElement = domElement;
         this.bus = bus;
+        this.params = this.getParams(domElement);
     }
 
-    _createClass(ComponentData, null, [{
+    _createClass(ComponentData, [{
+        key: "getParams",
+        value: function getParams(domElement) {
+            var domParams = domElement.dataset.rayParams;
+            var params = {};
+            if (domParams == undefined) {
+                return params;
+            }
+
+            try {
+                params = JSON.parse(domParams);
+            } catch (e) {
+                var errorMessage = "Invalid JSON syntax in data-ray-params: '" + domParams + "'";
+                throw new Error(errorMessage);
+            }
+
+            this.DOMElement.removeAttribute('data-ray-params');
+
+            return params;
+        }
+    }], [{
         key: "create",
         value: function create(domElement, bus) {
             return new ComponentData(domElement, bus);
@@ -284,11 +307,15 @@ var CommandDispatcher = function () {
             this.listenerToExecNewComponents = this.bus.on(Commands.EXECUTE_NEW_COMPONENTS, function () {
                 self._executeNewComponents();
             });
+            this.listenerToCatchError = this.bus.on(Events.ERROR, function (e) {
+                console.error('RayJS Error: ' + e.stack);
+            });
         }
     }, {
         key: 'end',
         value: function end() {
             this.bus.off(this.listenerToExecNewComponents);
+            this.bus.off(this.listenerToCatchError);
         }
     }, {
         key: '_executeNewComponents',
@@ -303,11 +330,9 @@ var CommandDispatcher = function () {
                     }
                     domElement.setAttribute(EXECUTED_ATTRIBUTE, '');
 
-                    var component = Component.execute(domElement, self.bus);
-                    component.execute();
+                    Component.execute(domElement, self.bus);
                 } catch (e) {
                     self.bus.trigger(Events.ERROR, e);
-                    console.log('RayJS: Error loading components: ' + e.message);
                 }
             });
         }

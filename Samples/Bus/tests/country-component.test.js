@@ -80,5 +80,23 @@ describe("Country Component", () => {
         fixture.elementBySelector("option[value=DE]").selected = 'selected';
     });
 
+    it('should print the background of the select', () => {
+        fixture.append(() => {/*
+            <select
+                data-ray-component="CountryComponent"
+                data-ray-params='{"background":"gray"}'
+            >
+                <option label="Alemania" value="DE">Alemania</option>
+                <option label="España" value="ES" selected="selected">España</option>
+                <option label="Estados Unidos" value="US" >Estados Unidos</option>
+            </select>
+        */
+        });
 
+        const bus = Ray.createBus();
+        const selectElement = fixture.elementByTag("select");
+        Ray.executeComponent(selectElement, bus);
+
+        expect(selectElement.style.backgroundColor).toBe("gray");
+    });
 });
