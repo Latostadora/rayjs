@@ -18,7 +18,7 @@ Just download [ray.js](https://raw.githubusercontent.com/Latostadora/rayjs/maste
 
 or use this:
 
-```<script type="text/javascript" src="https://raw.githubusercontent.com/josecgil/rayjs/master/dist/ray-min.js"></script>```
+```<script type="text/javascript" src="https://raw.githubusercontent.com/Latostadora/rayjs/master/dist/ray-min.js"></script>```
 
 then, when your are ready to start looking for components, execute this:
 
