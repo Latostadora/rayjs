@@ -30,9 +30,10 @@ then, when your are ready to start looking for components, execute this:
 
 ## An overview
 
-When de DOM is ready `Ray.js` checks the DOM for elements with the `data-ray-component` attribute and executes the js that indicates the value of this attribute.
+When de DOM is ready `Ray.js` checks the DOM for elements with the `data-ray-component` attribute and executes the js that indicates the value of this attribute (Example 1).
+You can add `data-ray-params` attribute with value on JSON format (Example 2).
 
-Example:
+Example 1:
 
 Let's suppose we have this html (note the `data-ray-component` attribute)
 
@@ -48,6 +49,25 @@ the JS part of this component changes the src when it's executed:
         image.setAttribute("src","images/test2.jpg");
     };
 ```
+
+Example 2:
+
+Let's suppose we have this html (note the `data-ray-component` attribute)
+
+```
+    <img data-ray-component="ChangeImageSrcComponent" data-ray-params='{"srcImage":"images/test2.jpg"}' src="images/test1.jpg">
+```
+
+the JS part of this component changes the src when it's executed and receive params inside data object:
+
+```
+    window.ChangeImageSrcComponent=function(data) {
+        var image = data.DOMElement;
+        var componentParams = data.params;
+        var src = componentParams.srcImage;
+        image.setAttribute("src",src);
+    };
+```
 For a more complex example check the [samples directory](https://github.com/josecgil/rayjs/tree/master/Samples)
 
 ## Data object
@@ -56,6 +76,7 @@ On every execution an component ```ray.js``` injects a data object containing 2 
 
 * DOMElement: a reference to the DOMElement that triggers the execution of the component
 * bus: a reference to an EventBus
+* params: a reference to params added in DOM Element like `data-ray-params` in JSON
 
 ## Bus
 
