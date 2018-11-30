@@ -2,7 +2,7 @@
 
 `ray.js` is a library that checks the DOM for html components and execute its related js counterpart
 
-![alt tag](https://raw.githubusercontent.com/josecgil/rayjs/master/logo/rayjs.jpg)
+![alt tag](https://raw.githubusercontent.com/Latostadora/rayjs/master/logo/rayjs.jpg)
 
 ## Table of contents
 
@@ -14,7 +14,7 @@
 
 ## Installation
 
-Just download [ray.js](https://raw.githubusercontent.com/josecgil/rayjs/master/dist/ray.js) and load it in your page
+Just download [ray.js](https://raw.githubusercontent.com/Latostadora/rayjs/master/dist/ray.js) and load it in your page
 
 or use this:
 
@@ -68,7 +68,7 @@ the JS part of this component changes the src when it's executed and receive par
         image.setAttribute("src",src);
     };
 ```
-For a more complex example check the [samples directory](https://github.com/josecgil/rayjs/tree/master/Samples)
+For a more complex example check the [samples directory](https://github.com/Latostadora/rayjs/tree/master/Samples)
 
 ## Data object
 
@@ -105,4 +105,4 @@ You can send a command to the ```ray.js``` bus to search & execute new component
 
 ## More examples
 
-You can check more complex examples in the [samples directory](https://github.com/josecgil/rayjs/tree/master/Samples)
+You can check more complex examples in the [samples directory](https://github.com/Latostadora/rayjs/tree/master/Samples)
