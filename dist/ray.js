@@ -187,20 +187,30 @@ var ComponentData = function () {
 
         this.DOMElement = domElement;
         this.bus = bus;
-        this.params = {};
-        var domParams = domElement.dataset.rayParams;
-        if (domParams == undefined) {
-            return;
-        }
-        try {
-            this.params = JSON.parse(domParams);
-        } catch (e) {
-            var errorMessage = "Invalid JSON syntax in data-ray-params: '" + domParams + "'";
-            throw new Error(errorMessage);
-        }
+        this.params = this.getParams(domElement);
     }
 
-    _createClass(ComponentData, null, [{
+    _createClass(ComponentData, [{
+        key: "getParams",
+        value: function getParams(domElement) {
+            var domParams = domElement.dataset.rayParams;
+            var params = {};
+            if (domParams == undefined) {
+                return params;
+            }
+
+            try {
+                params = JSON.parse(domParams);
+            } catch (e) {
+                var errorMessage = "Invalid JSON syntax in data-ray-params: '" + domParams + "'";
+                throw new Error(errorMessage);
+            }
+
+            this.DOMElement.removeAttribute('data-ray-params');
+
+            return params;
+        }
+    }], [{
         key: "create",
         value: function create(domElement, bus) {
             return new ComponentData(domElement, bus);

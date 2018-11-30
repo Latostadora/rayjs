@@ -557,26 +557,45 @@ describe("ray JS lib", function() {
     });
 
     it("must return an empty object if params does't exists", function (done) {
+        const isEmptyObject = (obj) => {
+            return Object.keys(obj).length === 0 && obj.constructor === Object;
+        };
 
-            const isEmptyObject= obj => Object.keys(obj).length === 0 && obj.constructor === Object;
+        const INITIAL_HTML = `
+            <img data-ray-component="SampleComponent" />
+        `;
 
-            const INITIAL_HTML = `
-                <img data-ray-component="SampleComponent" />
-            `;
+        fixture.append(INITIAL_HTML);
 
-            fixture.append(INITIAL_HTML);
+        const bus = Ray.createBus();
+        const imageDomElement = fixture.elementByTag("img");
 
-            const bus = Ray.createBus();
-            const imageDomElement = fixture.elementByTag("img");
+        window.SampleComponent=function(data) {
+            expect(isEmptyObject(data.params)).toBeTruthy();
+            done();
+        };
 
-            window.SampleComponent=function(data) {
-                expect(isEmptyObject(data.params)).toBeTruthy();
-                done();
-            };
-
-            Ray.executeComponent(imageDomElement, bus);
+        Ray.executeComponent(imageDomElement, bus);
     });
 
+    it("must delete params from DOM after create class", function (done) {
+        const INITIAL_HTML = `
+            <img data-ray-component="SampleComponent" data-ray-params='{"sampleVariable":"sampleValue"}' />
+        `;
+
+        fixture.append(INITIAL_HTML);
+
+        const bus = Ray.createBus();
+        const imageDomElement = fixture.elementByTag("img");
+
+        window.SampleComponent=function(data) {
+            const params = imageDomElement.dataset.rayParams;
+            expect(params).toBeUndefined();
+            done();
+        };
+
+        Ray.executeComponent(imageDomElement, bus);
+    });
 
 });
 
