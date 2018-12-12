@@ -261,21 +261,42 @@ var Component = function () {
             };
 
             var data = RayNS.ComponentData.create(domElement, bus);
+            var dataRayComponentsAttrValue = domElement.getAttribute(Component.DATA_RAY_ATTR).split(",");
+            dataRayComponentsAttrValue.forEach(function (dataRayComponentAttrValue) {
+                var attributes = domElement.getAttribute(Component.DATA_RAY_EXECUTED_ATTR);
+                if (attributes === null) {
+                    attributes = [];
+                } else {
+                    attributes = attributes.split(',');
+                }
 
-            var dataRayComponentAttrValue = domElement.getAttribute(Component.DATA_RAY_ATTR);
-            var componentName = getComponentName(dataRayComponentAttrValue);
-            var lastNamespaceObject = getLastNamespaceObject(dataRayComponentAttrValue);
-            var componentConstructorFn = lastNamespaceObject[componentName];
-            if (componentConstructorFn === undefined) {
-                throw new Error("<" + componentName + "> JS object not Found");
-            }
-            var component = new Component(componentConstructorFn, data);
-            component.execute();
+                var componentName = getComponentName(dataRayComponentAttrValue);
+
+                if (attributes.indexOf(dataRayComponentAttrValue) > -1) {
+                    return;
+                }
+
+                var lastNamespaceObject = getLastNamespaceObject(dataRayComponentAttrValue);
+                var componentConstructorFn = lastNamespaceObject[componentName];
+                if (componentConstructorFn === undefined) {
+                    throw new Error("<" + componentName + "> JS object not Found");
+                }
+                var component = new Component(componentConstructorFn, data);
+                component.execute();
+
+                attributes.push(dataRayComponentAttrValue);
+                domElement.setAttribute(Component.DATA_RAY_EXECUTED_ATTR, attributes.join(','));
+            });
         }
     }, {
         key: "DATA_RAY_ATTR",
         get: function get() {
             return "data-ray-component";
+        }
+    }, {
+        key: "DATA_RAY_EXECUTED_ATTR",
+        get: function get() {
+            return "data-ray-component-executed";
         }
     }]);
 
@@ -283,7 +304,7 @@ var Component = function () {
 }();
 
 window.RayNS = window.RayNS || {};
-window.RayNS.Component = Component;'use strict';
+window.RayNS.Component = Component;"use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -301,35 +322,29 @@ var CommandDispatcher = function () {
     }
 
     _createClass(CommandDispatcher, [{
-        key: 'begin',
+        key: "begin",
         value: function begin() {
             var self = this;
             this.listenerToExecNewComponents = this.bus.on(Commands.EXECUTE_NEW_COMPONENTS, function () {
                 self._executeNewComponents();
             });
             this.listenerToCatchError = this.bus.on(Events.ERROR, function (e) {
-                console.error('RayJS Error: ' + e.stack);
+                console.error("RayJS Error: " + e.stack);
             });
         }
     }, {
-        key: 'end',
+        key: "end",
         value: function end() {
             this.bus.off(this.listenerToExecNewComponents);
             this.bus.off(this.listenerToCatchError);
         }
     }, {
-        key: '_executeNewComponents',
+        key: "_executeNewComponents",
         value: function _executeNewComponents() {
             var DATA_RAY_ATTR = RayNS.Component.DATA_RAY_ATTR;
             var self = this;
-            return document.querySelectorAll('[' + DATA_RAY_ATTR + ']').forEach(function (domElement) {
+            return document.querySelectorAll("[" + DATA_RAY_ATTR + "]").forEach(function (domElement) {
                 try {
-                    var EXECUTED_ATTRIBUTE = 'data-ray-component-executed';
-                    if (domElement.hasAttribute(EXECUTED_ATTRIBUTE)) {
-                        return;
-                    }
-                    domElement.setAttribute(EXECUTED_ATTRIBUTE, '');
-
                     Component.execute(domElement, self.bus);
                 } catch (e) {
                     self.bus.trigger(Events.ERROR, e);
