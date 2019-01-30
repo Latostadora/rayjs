@@ -263,16 +263,16 @@ var Component = function () {
             var data = RayNS.ComponentData.create(domElement, bus);
             var dataRayComponentsAttrValue = domElement.getAttribute(Component.DATA_RAY_ATTR).split(",");
             dataRayComponentsAttrValue.forEach(function (dataRayComponentAttrValue) {
-                var attributes = domElement.getAttribute(Component.DATA_RAY_EXECUTED_ATTR);
-                if (attributes === null) {
-                    attributes = [];
+                var componentsExecuted = domElement.getAttribute(Component.DATA_RAY_EXECUTED_ATTR);
+                if (componentsExecuted === null) {
+                    componentsExecuted = [];
                 } else {
-                    attributes = attributes.split(',');
+                    componentsExecuted = componentsExecuted.split(',');
                 }
 
                 var componentName = getComponentName(dataRayComponentAttrValue);
 
-                if (attributes.indexOf(dataRayComponentAttrValue) > -1) {
+                if (componentsExecuted.indexOf(dataRayComponentAttrValue) > -1) {
                     return;
                 }
 
@@ -284,8 +284,8 @@ var Component = function () {
                 var component = new Component(componentConstructorFn, data);
                 component.execute();
 
-                attributes.push(dataRayComponentAttrValue);
-                domElement.setAttribute(Component.DATA_RAY_EXECUTED_ATTR, attributes.join(','));
+                componentsExecuted.push(dataRayComponentAttrValue);
+                domElement.setAttribute(Component.DATA_RAY_EXECUTED_ATTR, componentsExecuted.join(','));
             });
         }
     }, {
