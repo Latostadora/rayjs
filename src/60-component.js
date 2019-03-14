@@ -13,6 +13,10 @@ class Component {
         return "data-ray-component";
     }
 
+    static get DATA_RAY_EXECUTED_ATTR() {
+        return "data-ray-component-executed";
+    }
+
     static execute(domElement, bus) {
 
         const getComponentName = (dataRayComponentAttrValue) => {
@@ -31,17 +35,33 @@ class Component {
             return obj;
         };
 
-        const data=RayNS.ComponentData.create(domElement, bus);
+        const data = RayNS.ComponentData.create(domElement, bus);
+        const dataRayComponentsAttrValue = domElement.getAttribute(Component.DATA_RAY_ATTR).split(",");
+        dataRayComponentsAttrValue.forEach(dataRayComponentAttrValue => {
+            let componentsExecuted = domElement.getAttribute(Component.DATA_RAY_EXECUTED_ATTR);
+            if(componentsExecuted === null) {
+                componentsExecuted = [];
+            } else {
+                componentsExecuted = componentsExecuted.split(',');
+            }
 
-        const dataRayComponentAttrValue = domElement.getAttribute(Component.DATA_RAY_ATTR);
-        const componentName = getComponentName(dataRayComponentAttrValue);
-        const lastNamespaceObject = getLastNamespaceObject(dataRayComponentAttrValue);
-        const componentConstructorFn = lastNamespaceObject[componentName];
-        if (componentConstructorFn===undefined) {
-            throw new Error(`<${componentName}> JS object not Found`);
-        }
-        const component = new Component(componentConstructorFn, data);
-        component.execute();
+            const componentName = getComponentName(dataRayComponentAttrValue);
+
+            if(componentsExecuted.indexOf(dataRayComponentAttrValue) > -1) {
+                return;
+            }
+
+            const lastNamespaceObject = getLastNamespaceObject(dataRayComponentAttrValue);
+            const componentConstructorFn = lastNamespaceObject[componentName];
+            if (componentConstructorFn === undefined) {
+                throw new Error(`<${componentName}> JS object not Found`);
+            }
+            const component = new Component(componentConstructorFn, data);
+            component.execute();
+
+            componentsExecuted.push(dataRayComponentAttrValue);
+            domElement.setAttribute(Component.DATA_RAY_EXECUTED_ATTR, componentsExecuted.join(','));
+        });
     }
 }
 

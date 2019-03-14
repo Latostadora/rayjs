@@ -42,7 +42,7 @@ describe("ray JS lib", function() {
          <img data-ray-component="NS1.NS2.NS3.ChangeImageSrcComponent" src="images/test1.jpg">
          `;
         const EXPECTED_HTML=`
-         <img data-ray-component="NS1.NS2.NS3.ChangeImageSrcComponent" src="images/test2.jpg" data-ray-component-executed>
+         <img data-ray-component="NS1.NS2.NS3.ChangeImageSrcComponent" src="images/test2.jpg" data-ray-component-executed="NS1.NS2.NS3.ChangeImageSrcComponent">
          `;
 
         window.NS1={};
@@ -65,7 +65,7 @@ describe("ray JS lib", function() {
             <img data-ray-component="ChangeImageSrcComponent" src="images/test1.jpg">
         `;
         const EXPECTED_HTML=`
-            <img data-ray-component="ChangeImageSrcComponent" src="images/test2.jpg" data-ray-component-executed>
+            <img data-ray-component="ChangeImageSrcComponent" src="images/test2.jpg" data-ray-component-executed="ChangeImageSrcComponent">
          `;
 
         window.ChangeImageSrcComponent=function(data) {
@@ -88,7 +88,7 @@ describe("ray JS lib", function() {
          <img data-ray-component="Namespace.ChangeImageSrcComponent" src="images/test1.jpg">
          `;
         const EXPECTED_HTML=`
-         <img data-ray-component="Namespace.ChangeImageSrcComponent" src="images/test2.jpg" data-ray-component-executed>
+         <img data-ray-component="Namespace.ChangeImageSrcComponent" src="images/test2.jpg" data-ray-component-executed="Namespace.ChangeImageSrcComponent">
          `;
 
         window.Namespace={};
@@ -109,7 +109,7 @@ describe("ray JS lib", function() {
          <img data-ray-component="ChangeImageSrcComponent" src="images/test1.jpg">
          `;
         const EXPECTED_HTML=`
-         <img data-ray-component="ChangeImageSrcComponent" src="images/test2.jpg" data-ray-component-executed>
+         <img data-ray-component="ChangeImageSrcComponent" src="images/test2.jpg" data-ray-component-executed="ChangeImageSrcComponent">
          `;
 
         window.ChangeImageSrcComponent=function(data) {
@@ -144,7 +144,7 @@ describe("ray JS lib", function() {
          <img data-ray-component="ChangeImageSrcComponent" src="images/test1.jpg">
          `;
         const EXPECTED_HTML=`
-         <img data-ray-component="ChangeImageSrcComponent" src="images/test2.jpg" data-ray-component-executed>
+         <img data-ray-component="ChangeImageSrcComponent" src="images/test2.jpg" data-ray-component-executed="ChangeImageSrcComponent">
          `;
 
         const ChangeImageSrcComponent=function(data) {
@@ -595,6 +595,88 @@ describe("ray JS lib", function() {
         };
 
         Ray.executeComponent(imageDomElement, bus);
+    });
+
+    it("must load 2 components in the same tag", function () {
+        const INITIAL_HTML = `
+         <img data-ray-component="FirstComponent,SecondComponent" style="width:20px;" src="images/test1.jpg">
+         `;
+
+        const EXPECTED_HTML = `
+         <img data-ray-component="FirstComponent,SecondComponent" style="width:40px;" src="images/test2.jpg" data-ray-component-executed="FirstComponent,SecondComponent">
+         `;
+
+        window.FirstComponent = function (data) {
+            const image = data.DOMElement;
+            image.setAttribute("src", "images/test2.jpg");
+        };
+
+        window.SecondComponent = function(data) {
+            const image = data.DOMElement;
+            image.setAttribute("style", "width:40px;");
+        };
+
+        fixture.append(INITIAL_HTML);
+
+        fireDOMReady();
+
+        expect(fixture.isEqual(EXPECTED_HTML)).toBeTruthy();
+    });
+
+    it("must load 2 components in the same tag with correct order", function () {
+
+        const INITIAL_HTML = `
+         <img data-ray-component="FirstComponent,SecondComponent" src="images/test1.jpg">
+         `;
+
+        const EXPECTED_HTML = `
+         <img data-ray-component="FirstComponent,SecondComponent" src="images/test3.jpg" data-ray-component-executed="FirstComponent,SecondComponent">
+         `;
+
+        window.FirstComponent = function (data) {
+            const image = data.DOMElement;
+            image.setAttribute("src", "images/test2.jpg");
+        };
+
+        window.SecondComponent = function(data) {
+            const image = data.DOMElement;
+            image.setAttribute("src", "images/test3.jpg");
+        };
+
+        fixture.append(INITIAL_HTML);
+
+        fireDOMReady();
+
+        expect(fixture.isEqual(EXPECTED_HTML)).toBeTruthy();
+    });
+
+
+
+    it("must load 2 components in the same tag only once", function () {
+
+        const INITIAL_HTML = `
+         <img data-ray-component="FirstComponent,SecondComponent,FirstComponent" src="images/test1.jpg">
+         `;
+
+        const EXPECTED_HTML = `
+         <img data-ray-component="FirstComponent,SecondComponent,FirstComponent" src="images/test3.jpg" data-ray-component-executed="FirstComponent,SecondComponent">
+         `;
+
+        window.FirstComponent = function (data) {
+            const image = data.DOMElement;
+            image.setAttribute("src", "images/test2.jpg");
+        };
+
+        window.SecondComponent = function(data) {
+            const image = data.DOMElement;
+            image.setAttribute("src", "images/test3.jpg");
+        };
+
+        fixture.append(INITIAL_HTML);
+
+        fireDOMReady();
+
+        expect(fixture.isEqual(EXPECTED_HTML)).toBeTruthy();
     });
 
 });

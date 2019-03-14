@@ -27,12 +27,6 @@ class CommandDispatcher {
         const self = this;
         return document.querySelectorAll(`[${DATA_RAY_ATTR}]`).forEach(domElement => {
             try {
-                const EXECUTED_ATTRIBUTE = 'data-ray-component-executed';
-                if (domElement.hasAttribute(EXECUTED_ATTRIBUTE)) {
-                    return;
-                }
-                domElement.setAttribute(EXECUTED_ATTRIBUTE, '');
-
                 Component.execute(domElement, self.bus);
             } catch (e) {
                 self.bus.trigger(Events.ERROR, e);
