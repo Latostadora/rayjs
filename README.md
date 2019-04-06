@@ -33,7 +33,7 @@ then, when your are ready to start looking for components, execute this:
 When de DOM is ready `Ray.js` checks the DOM for elements with the `data-ray-component` attribute and executes the js that indicates the value of this attribute (Example 1).
 You can add `data-ray-params` attribute with value on JSON format (Example 2).
 
-Example 1:
+Example:
 
 Let's suppose we have this html (note the `data-ray-component` attribute)
 
@@ -50,29 +50,11 @@ the JS part of this component changes the src when it's executed:
     };
 ```
 
-Example 2:
-
-Let's suppose we have this html (note the `data-ray-component` attribute)
-
-```
-    <img data-ray-component="ChangeImageSrcComponent" data-ray-params='{"srcImage":"images/test2.jpg"}' src="images/test1.jpg">
-```
-
-the JS part of this component changes the src when it's executed and receive params inside data object:
-
-```
-    window.ChangeImageSrcComponent=function(data) {
-        var image = data.DOMElement;
-        var componentParams = data.params;
-        var src = componentParams.srcImage;
-        image.setAttribute("src",src);
-    };
-```
 For a more complex example check the [samples directory](https://github.com/Latostadora/rayjs/tree/master/Samples)
 
 ## Data object
 
-On every execution an component ```ray.js``` injects a data object containing 2 properties:
+On every execution an component ```ray.js``` injects a data object containing 3 properties:
 
 * DOMElement: a reference to the DOMElement that triggers the execution of the component
 * bus: a reference to an EventBus
@@ -84,6 +66,26 @@ The ```ray.js``` bus has two methods:
 
 * ```trigger(eventName, eventPayload)``` triggers an event with the corresponding payload
 * ```on(eventName, callbackFn)``` listen to an event an sets the callback function to be called when the event happens
+
+## ```data-ray-params``` attribute
+
+The `data-ray-params` attribute allows to inject JSON formatted params (it must be valid JSON or it will fail)
+
+Let's suppose we have this html (note the `data-ray-params` attribute)
+
+```
+    <img data-ray-component="ChangeImageSrcComponent" data-ray-params='{"srcImage":"images/test2.jpg"}' src="images/test1.jpg">
+```
+
+the JS part of this component receives the ```params``` property on the ```data``` object:
+
+```
+    window.ChangeImageSrcComponent=function(data) {
+        var image = data.DOMElement;
+        var src = data.params.srcImage;
+        image.setAttribute("src",src);
+    };
+```
 
 ## Errors
 
