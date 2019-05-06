@@ -1,6 +1,6 @@
 {
   "name": "@latostadora/rayjs",
-  "version": "0.9.1",
+  "version": "0.10.1",
   "description": "`ray.js` is a library that checks the DOM for html components and execute its related js counterpart",
   "main": "dist/ray.js",
   "scripts": {

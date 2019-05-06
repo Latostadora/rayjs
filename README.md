@@ -41,6 +41,11 @@ Let's suppose we have this html (note the `data-ray-component` attribute)
     <img data-ray-component="ChangeImageSrcComponent" src="images/test1.jpg">
 ```
 
+Also, you can load multiple components like this:
+```
+    <img data-ray-component="ChangeImageSrcComponent,SimpleImageComponent" src="images/test1.jpg">
+```
+
 the JS part of this component changes the src when it's executed:
 
 ```
@@ -59,6 +64,7 @@ On every execution an component ```ray.js``` injects a data object containing 3 
 * DOMElement: a reference to the DOMElement that triggers the execution of the component
 * bus: a reference to an EventBus
 * params: a reference to params added in DOM Element like `data-ray-params` in JSON
+* If you have multiple components the data object is shared for all of them
 
 ## Bus
 
