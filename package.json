@@ -35,7 +35,8 @@
     "stryker-api": "^0.21.4",
     "stryker-html-reporter": "^0.16.5",
     "stryker-javascript-mutator": "^0.10.2",
-    "stryker-jest-runner": "^1.2.4"
+    "stryker-jest-runner": "^1.2.4",
+    "tree-kill": ">=1.2.2"
   },
   "jest": {
     "transform": {}
