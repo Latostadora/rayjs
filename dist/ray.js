@@ -279,7 +279,7 @@ var Component = function () {
                 var lastNamespaceObject = getLastNamespaceObject(dataRayComponentAttrValue);
                 var componentConstructorFn = lastNamespaceObject[componentName];
                 if (componentConstructorFn === undefined) {
-                    throw new Error("<" + componentName + "> JS object not Found");
+                    return;
                 }
                 var component = new Component(componentConstructorFn, data);
                 component.execute();
