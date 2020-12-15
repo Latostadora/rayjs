@@ -443,18 +443,11 @@ describe("ray JS lib", function() {
 
     });
 
-
-    it("should send a 'ray.error' event if component doesn't exists", function(done) {
+    it("should ignore if component doesn't exists", function() {
         const INITIAL_HTML=`
             <img data-ray-component="NonExistentComponent" />
         `;
         fixture.append(INITIAL_HTML);
-        ray.bus.on(Ray.Events.ERROR, function(exception){
-            expect(exception instanceof Error).toBeTruthy();
-            expect("<NonExistentComponent> JS object not Found").toBe(exception.message);
-            done();
-        });
-        fireDOMReady();
     });
 
     it("must create a new Bus", function() {

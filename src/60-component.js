@@ -54,7 +54,7 @@ class Component {
             const lastNamespaceObject = getLastNamespaceObject(dataRayComponentAttrValue);
             const componentConstructorFn = lastNamespaceObject[componentName];
             if (componentConstructorFn === undefined) {
-                throw new Error(`<${componentName}> JS object not Found`);
+                return;
             }
             const component = new Component(componentConstructorFn, data);
             component.execute();
