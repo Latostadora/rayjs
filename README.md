@@ -14,11 +14,9 @@
 
 ## Installation
 
-Just download [ray.js](https://raw.githubusercontent.com/Latostadora/rayjs/master/dist/ray.js) and load it in your page
+Install as npm package: https://nodejs.org/download/release/latest-v12.x/
 
-or use this:
-
-```<script type="text/javascript" src="https://raw.githubusercontent.com/Latostadora/rayjs/master/dist/ray-min.js"></script>```
+Or just download [ray.js](https://raw.githubusercontent.com/Latostadora/rayjs/master/dist/ray.js) and load it in your page
 
 then, when your are ready to start looking for components, execute this:
 
