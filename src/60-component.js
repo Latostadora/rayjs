@@ -1,3 +1,8 @@
+// Data object per DOM element. data-ray-params is removed from the DOM once parsed,
+// so the parsed data must be kept here to be shared with components executed later
+// (e.g. when one of them is defined after the first pass).
+const componentDataCache = new WeakMap();
+
 class Component {
 
     constructor(componentConstructorFn, data) {
@@ -17,7 +22,13 @@ class Component {
         return "data-ray-component-executed";
     }
 
-    static execute(domElement, bus) {
+    static get DATA_RAY_FAILED_ATTR() {
+        return "data-ray-component-failed";
+    }
+
+    // onError (optional): called for every error. If not given, the first error is thrown
+    // after trying every component of the element.
+    static execute(domElement, bus, onError) {
 
         const getComponentName = (dataRayComponentAttrValue) => {
             const namespaces = dataRayComponentAttrValue.split(".");
@@ -29,44 +40,101 @@ class Component {
             namespaces.pop();
 
             let obj=window;
-            namespaces.forEach(namespace => {
-                obj=obj[namespace];
-            });
+            for (let i = 0; i < namespaces.length; i++) {
+                obj=obj[namespaces[i]];
+                if (obj === undefined || obj === null) {
+                    return undefined;
+                }
+            }
             return obj;
         };
 
-        const data = RayNS.ComponentData.create(domElement, bus);
-        const dataRayComponentsAttrValue = domElement.getAttribute(Component.DATA_RAY_ATTR).split(",");
-        dataRayComponentsAttrValue.forEach(dataRayComponentAttrValue => {
-            let componentsExecuted = domElement.getAttribute(Component.DATA_RAY_EXECUTED_ATTR);
-            if(componentsExecuted === null) {
-                componentsExecuted = [];
-            } else {
-                componentsExecuted = componentsExecuted.split(',');
-            }
+        const getAttrList = (attrName) => {
+            const value = domElement.getAttribute(attrName);
+            return value === null ? [] : value.split(',');
+        };
 
-            const componentName = getComponentName(dataRayComponentAttrValue);
+        const addToAttrList = (attrName, name) => {
+            const list = getAttrList(attrName);
+            list.push(name);
+            domElement.setAttribute(attrName, list.join(','));
+        };
 
-            if(componentsExecuted.indexOf(dataRayComponentAttrValue) > -1) {
+        const componentNames = domElement.getAttribute(Component.DATA_RAY_ATTR)
+            .split(",")
+            .map(name => name.trim())
+            .filter(name => name !== "");
+
+        const isPending = (name) => getAttrList(Component.DATA_RAY_EXECUTED_ATTR).indexOf(name) === -1
+            && getAttrList(Component.DATA_RAY_FAILED_ATTR).indexOf(name) === -1;
+
+        if (!componentNames.some(isPending)) {
+            return;
+        }
+
+        let data;
+        try {
+            data = Component._getData(domElement, bus);
+        } catch (e) {
+            // Invalid params: no component of this element can run. Mark them as failed
+            // so they are not retried (and the error is not reported) on every pass.
+            componentNames.filter(isPending).forEach(name => {
+                addToAttrList(Component.DATA_RAY_FAILED_ATTR, name);
+            });
+            throw e;
+        }
+
+        const errors = [];
+        componentNames.forEach(dataRayComponentAttrValue => {
+            if (!isPending(dataRayComponentAttrValue)) {
                 return;
             }
 
             const lastNamespaceObject = getLastNamespaceObject(dataRayComponentAttrValue);
-            const componentConstructorFn = lastNamespaceObject[componentName];
+            if (lastNamespaceObject === undefined) {
+                return;
+            }
+            const componentConstructorFn = lastNamespaceObject[getComponentName(dataRayComponentAttrValue)];
             if (componentConstructorFn === undefined) {
                 return;
             }
-            const component = new Component(componentConstructorFn, data);
-            component.execute();
 
-            componentsExecuted.push(dataRayComponentAttrValue);
-            domElement.setAttribute(Component.DATA_RAY_EXECUTED_ATTR, componentsExecuted.join(','));
+            try {
+                new Component(componentConstructorFn, data).execute();
+            } catch (e) {
+                addToAttrList(Component.DATA_RAY_FAILED_ATTR, dataRayComponentAttrValue);
+                if (onError) {
+                    onError(e);
+                } else {
+                    errors.push(e);
+                }
+                return;
+            }
+
+            addToAttrList(Component.DATA_RAY_EXECUTED_ATTR, dataRayComponentAttrValue);
         });
+
+        if (errors.length > 0) {
+            throw errors[0];
+        }
+    }
+
+    static _getData(domElement, bus) {
+        const cached = componentDataCache.get(domElement);
+        if (cached !== undefined) {
+            if (cached.bus === bus) {
+                return cached;
+            }
+            const data = RayNS.ComponentData.create(domElement, bus, cached.params);
+            componentDataCache.set(domElement, data);
+            return data;
+        }
+        const data = RayNS.ComponentData.create(domElement, bus);
+        componentDataCache.set(domElement, data);
+        return data;
     }
 }
 
 
 window.RayNS=window.RayNS || {};
 window.RayNS.Component=Component;
-
-

@@ -1,10 +1,10 @@
 const Events=RayNS.Events;
 
 class ComponentData {
-    constructor(domElement, bus) {
+    constructor(domElement, bus, params) {
         this.DOMElement = domElement;
         this.bus = bus;
-        this.params = this.getParams(domElement);
+        this.params = params !== undefined ? params : this.getParams(domElement);
     }
 
     getParams(domElement) {
@@ -26,8 +26,8 @@ class ComponentData {
         return params;
     }
 
-    static create(domElement, bus) {
-        return new ComponentData(domElement, bus);
+    static create(domElement, bus, params) {
+        return new ComponentData(domElement, bus, params);
     }
 }
 

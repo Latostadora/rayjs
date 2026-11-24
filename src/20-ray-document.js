@@ -4,9 +4,10 @@ class Document {
         this.eventNamesToListen=eventsToListen;
         const self=this;
         this._notified=false;
+        this._alreadyReadyTimeoutId=null;
 
         this.listener = () => {
-            self._notifyReady(self.callbacks);
+            self._notifyReady();
         };
 
     }
@@ -14,42 +15,34 @@ class Document {
     begin() {
         document.addEventListener(this.eventNamesToListen.document, this.listener);
         window.addEventListener(this.eventNamesToListen.window, this.listener);
+        // If begin() is called after DOMContentLoaded, those events will never fire again.
+        // Deferred so callbacks registered with ready() right after begin() are included.
+        if (document.readyState !== 'loading') {
+            this._alreadyReadyTimeoutId = setTimeout(this.listener, 0);
+        }
     }
 
     end() {
         this._notified=false;
+        clearTimeout(this._alreadyReadyTimeoutId);
+        this._alreadyReadyTimeoutId=null;
         document.removeEventListener(this.eventNamesToListen.document, this.listener);
         window.removeEventListener(this.eventNamesToListen.window, this.listener);
         this.callbacks=[];
     }
 
     ready(callback) {
-        //if (this._documentIsReady()) {
-        //    callback();
-        //} else {
         this.callbacks.push(callback);
-        //}
     }
 
-    _notifyReady(callbacks) {
+    _notifyReady() {
         if (this._notified) return;
         this._notified=true;
+        const callbacks=this.callbacks;
+        this.callbacks=[];
         callbacks.forEach(callback => {
             callback();
         });
-        callbacks=[];
-    }
-
-    _documentIsReady() {
-        const readyState = document.readyState;
-        const isScrolling = document.documentElement.doScroll;
-        const isComplete=readyState === 'complete';
-        const isLoading=readyState === 'loading';
-        if (isComplete) return true;
-        if ( (!isLoading) && (!isScrolling) ) {
-            return true;
-        }
-        return false;
     }
 }
 

@@ -672,5 +672,118 @@ describe("ray JS lib", function() {
         expect(fixture.isEqual(EXPECTED_HTML)).toBeTruthy();
     });
 
+    describe("regressions", function() {
+
+        let errors;
+        let consoleErrorSpy;
+
+        function executePasses(times) {
+            for (let i = 0; i < times; i++) {
+                ray.bus.trigger(Ray.Commands.EXECUTE_NEW_COMPONENTS);
+            }
+        }
+
+        beforeEach(function() {
+            errors = [];
+            ray.bus.on(Ray.Events.ERROR, e => errors.push(e));
+            consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+        });
+
+        afterEach(function() {
+            consoleErrorSpy.mockRestore();
+        });
+
+        it("must report invalid params only once, not on every pass", function() {
+            let executions = 0;
+            window.SampleComponent = function() { executions++; };
+            fixture.append(`<img data-ray-component="SampleComponent" data-ray-params='invalid'>`);
+
+            executePasses(3);
+
+            expect(errors.length).toBe(1);
+            expect(executions).toBe(0);
+            expect(fixture.elementByTag("img").getAttribute("data-ray-component-failed")).toBe("SampleComponent");
+        });
+
+        it("must report a throwing component only once and still run the other components", function() {
+            let secondExecutions = 0;
+            window.FirstComponent = function() { throw new Error("boom"); };
+            window.SecondComponent = function() { secondExecutions++; };
+            fixture.append(`<img data-ray-component="FirstComponent,SecondComponent">`);
+
+            executePasses(3);
+
+            expect(errors.length).toBe(1);
+            expect(errors[0].message).toBe("boom");
+            expect(secondExecutions).toBe(1);
+            const img = fixture.elementByTag("img");
+            expect(img.getAttribute("data-ray-component-failed")).toBe("FirstComponent");
+            expect(img.getAttribute("data-ray-component-executed")).toBe("SecondComponent");
+        });
+
+        it("must keep params and shared data for a component defined after the first pass", function() {
+            let firstData;
+            let secondData;
+            delete window.SecondComponent;
+            window.FirstComponent = function(data) { firstData = data; };
+            fixture.append(`<img data-ray-component="FirstComponent,SecondComponent" data-ray-params='{"color":"red"}'>`);
+
+            executePasses(1);
+            window.SecondComponent = function(data) { secondData = data; };
+            executePasses(1);
+
+            expect(secondData.params.color).toBe("red");
+            expect(secondData).toBe(firstData);
+        });
+
+        it("must ignore a component whose intermediate namespace does not exist yet", function() {
+            let executions = 0;
+            delete window.NotLoadedNs;
+            fixture.append(`<img data-ray-component="NotLoadedNs.Sub.SampleComponent">`);
+
+            executePasses(2);
+            window.NotLoadedNs = {Sub: {SampleComponent: function() { executions++; }}};
+            executePasses(2);
+
+            expect(errors.length).toBe(0);
+            expect(executions).toBe(1);
+        });
+
+        it("must accept spaces between component names", function() {
+            let executions = 0;
+            window.FirstComponent = function() { executions++; };
+            window.SecondComponent = function() { executions++; };
+            fixture.append(`<img data-ray-component="FirstComponent, SecondComponent">`);
+
+            executePasses(1);
+
+            expect(executions).toBe(2);
+        });
+
+        it("must execute components when begin() is called after the document is loaded", function(done) {
+            expect(document.readyState).not.toBe('loading');
+            let executions = 0;
+            window.SampleComponent = function() { executions++; };
+            fixture.append(`<img data-ray-component="SampleComponent">`);
+            // No fireDOMReady(): those events already happened.
+            // Checked well before the 400ms polling could hide the problem.
+            setTimeout(function() {
+                expect(executions).toBe(1);
+                done();
+            }, 50);
+        });
+
+        it("must notify every subscriber even if one unsubscribes while triggering", function() {
+            const bus = Ray.createBus();
+            const calls = [];
+            const firstId = bus.on("topic", () => { calls.push("first"); bus.off(firstId); });
+            bus.on("topic", () => calls.push("second"));
+
+            bus.trigger("topic");
+
+            expect(calls).toEqual(["first", "second"]);
+        });
+    });
+
 });
 

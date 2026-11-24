@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "rm -rf dist/*.* && rm -rf dist/src/*.*",
     "transpile": "babel src -d dist/src",
-    "concatenate": "cat dist/src/*.js >dist/ray.js",
+    "concatenate": "(echo \"(function () {\" && cat dist/src/*.js && echo \"\" && echo \"})();\") >dist/ray.js",
     "minify": "uglifyjs dist/ray.js --compress --mangle --output dist/ray-min.js",
     "build": "npm run clean && npm run transpile && npm run concatenate && npm run minify",
     "test": "npm run build && jest",
