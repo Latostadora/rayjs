@@ -42,9 +42,8 @@ class Bus {
         if (!this.topics[topic]) {
             return false;
         }
-        const self=this;
-        const subscribers = self.topics[topic];
-        if (!subscribers) return;
+        // Copy: a callback may unsubscribe (off) while the list is being iterated
+        const subscribers = this.topics[topic].slice();
         subscribers.forEach(suscriber => {
             suscriber.callback(args);
         });

@@ -44,4 +44,6 @@ class Ray {
 }
 
 window.Ray=Ray;
-module.exports=Ray;
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports=Ray;
+}

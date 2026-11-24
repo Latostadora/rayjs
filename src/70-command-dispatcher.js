@@ -13,7 +13,7 @@ class CommandDispatcher {
             self._executeNewComponents();
         });
         this.listenerToCatchError = this.bus.on(Events.ERROR, (e) => {
-            console.error(`RayJS Error: ${e.stack}`);
+            console.error(`RayJS Error: ${e && e.stack ? e.stack : e}`);
         });
     }
 
@@ -25,9 +25,12 @@ class CommandDispatcher {
     _executeNewComponents() {
         const DATA_RAY_ATTR=RayNS.Component.DATA_RAY_ATTR;
         const self = this;
+        const reportError = (e) => {
+            self.bus.trigger(Events.ERROR, e);
+        };
         return document.querySelectorAll(`[${DATA_RAY_ATTR}]`).forEach(domElement => {
             try {
-                Component.execute(domElement, self.bus);
+                Component.execute(domElement, self.bus, reportError);
             } catch (e) {
                 self.bus.trigger(Events.ERROR, e);
             }

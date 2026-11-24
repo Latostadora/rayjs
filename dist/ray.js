@@ -1,3 +1,4 @@
+(function () {
 "use strict";
 
 // Production steps of ECMA-262, Edition 5, 15.4.4.18
@@ -71,9 +72,10 @@ var Document = function () {
         this.eventNamesToListen = eventsToListen;
         var self = this;
         this._notified = false;
+        this._alreadyReadyTimeoutId = null;
 
         this.listener = function () {
-            self._notifyReady(self.callbacks);
+            self._notifyReady();
         };
     }
 
@@ -82,11 +84,18 @@ var Document = function () {
         value: function begin() {
             document.addEventListener(this.eventNamesToListen.document, this.listener);
             window.addEventListener(this.eventNamesToListen.window, this.listener);
+            // If begin() is called after DOMContentLoaded, those events will never fire again.
+            // Deferred so callbacks registered with ready() right after begin() are included.
+            if (document.readyState !== 'loading') {
+                this._alreadyReadyTimeoutId = setTimeout(this.listener, 0);
+            }
         }
     }, {
         key: 'end',
         value: function end() {
             this._notified = false;
+            clearTimeout(this._alreadyReadyTimeoutId);
+            this._alreadyReadyTimeoutId = null;
             document.removeEventListener(this.eventNamesToListen.document, this.listener);
             window.removeEventListener(this.eventNamesToListen.window, this.listener);
             this.callbacks = [];
@@ -94,34 +103,18 @@ var Document = function () {
     }, {
         key: 'ready',
         value: function ready(callback) {
-            //if (this._documentIsReady()) {
-            //    callback();
-            //} else {
             this.callbacks.push(callback);
-            //}
         }
     }, {
         key: '_notifyReady',
-        value: function _notifyReady(callbacks) {
+        value: function _notifyReady() {
             if (this._notified) return;
             this._notified = true;
+            var callbacks = this.callbacks;
+            this.callbacks = [];
             callbacks.forEach(function (callback) {
                 callback();
             });
-            callbacks = [];
-        }
-    }, {
-        key: '_documentIsReady',
-        value: function _documentIsReady() {
-            var readyState = document.readyState;
-            var isScrolling = document.documentElement.doScroll;
-            var isComplete = readyState === 'complete';
-            var isLoading = readyState === 'loading';
-            if (isComplete) return true;
-            if (!isLoading && !isScrolling) {
-                return true;
-            }
-            return false;
         }
     }]);
 
@@ -182,12 +175,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var Events = RayNS.Events;
 
 var ComponentData = function () {
-    function ComponentData(domElement, bus) {
+    function ComponentData(domElement, bus, params) {
         _classCallCheck(this, ComponentData);
 
         this.DOMElement = domElement;
         this.bus = bus;
-        this.params = this.getParams(domElement);
+        this.params = params !== undefined ? params : this.getParams(domElement);
     }
 
     _createClass(ComponentData, [{
@@ -212,8 +205,8 @@ var ComponentData = function () {
         }
     }], [{
         key: "create",
-        value: function create(domElement, bus) {
-            return new ComponentData(domElement, bus);
+        value: function create(domElement, bus, params) {
+            return new ComponentData(domElement, bus, params);
         }
     }]);
 
@@ -226,6 +219,11 @@ window.RayNS.ComponentData = ComponentData;"use strict";
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// Data object per DOM element. data-ray-params is removed from the DOM once parsed,
+// so the parsed data must be kept here to be shared with components executed later
+// (e.g. when one of them is defined after the first pass).
+var componentDataCache = new WeakMap();
 
 var Component = function () {
     function Component(componentConstructorFn, data) {
@@ -242,7 +240,11 @@ var Component = function () {
         }
     }], [{
         key: "execute",
-        value: function execute(domElement, bus) {
+
+
+        // onError (optional): called for every error. If not given, the first error is thrown
+        // after trying every component of the element.
+        value: function execute(domElement, bus, onError) {
 
             var getComponentName = function getComponentName(dataRayComponentAttrValue) {
                 var namespaces = dataRayComponentAttrValue.split(".");
@@ -254,39 +256,101 @@ var Component = function () {
                 namespaces.pop();
 
                 var obj = window;
-                namespaces.forEach(function (namespace) {
-                    obj = obj[namespace];
-                });
+                for (var i = 0; i < namespaces.length; i++) {
+                    obj = obj[namespaces[i]];
+                    if (obj === undefined || obj === null) {
+                        return undefined;
+                    }
+                }
                 return obj;
             };
 
-            var data = RayNS.ComponentData.create(domElement, bus);
-            var dataRayComponentsAttrValue = domElement.getAttribute(Component.DATA_RAY_ATTR).split(",");
-            dataRayComponentsAttrValue.forEach(function (dataRayComponentAttrValue) {
-                var componentsExecuted = domElement.getAttribute(Component.DATA_RAY_EXECUTED_ATTR);
-                if (componentsExecuted === null) {
-                    componentsExecuted = [];
-                } else {
-                    componentsExecuted = componentsExecuted.split(',');
-                }
+            var getAttrList = function getAttrList(attrName) {
+                var value = domElement.getAttribute(attrName);
+                return value === null ? [] : value.split(',');
+            };
 
-                var componentName = getComponentName(dataRayComponentAttrValue);
+            var addToAttrList = function addToAttrList(attrName, name) {
+                var list = getAttrList(attrName);
+                list.push(name);
+                domElement.setAttribute(attrName, list.join(','));
+            };
 
-                if (componentsExecuted.indexOf(dataRayComponentAttrValue) > -1) {
+            var componentNames = domElement.getAttribute(Component.DATA_RAY_ATTR).split(",").map(function (name) {
+                return name.trim();
+            }).filter(function (name) {
+                return name !== "";
+            });
+
+            var isPending = function isPending(name) {
+                return getAttrList(Component.DATA_RAY_EXECUTED_ATTR).indexOf(name) === -1 && getAttrList(Component.DATA_RAY_FAILED_ATTR).indexOf(name) === -1;
+            };
+
+            if (!componentNames.some(isPending)) {
+                return;
+            }
+
+            var data = void 0;
+            try {
+                data = Component._getData(domElement, bus);
+            } catch (e) {
+                // Invalid params: no component of this element can run. Mark them as failed
+                // so they are not retried (and the error is not reported) on every pass.
+                componentNames.filter(isPending).forEach(function (name) {
+                    addToAttrList(Component.DATA_RAY_FAILED_ATTR, name);
+                });
+                throw e;
+            }
+
+            var errors = [];
+            componentNames.forEach(function (dataRayComponentAttrValue) {
+                if (!isPending(dataRayComponentAttrValue)) {
                     return;
                 }
 
                 var lastNamespaceObject = getLastNamespaceObject(dataRayComponentAttrValue);
-                var componentConstructorFn = lastNamespaceObject[componentName];
+                if (lastNamespaceObject === undefined) {
+                    return;
+                }
+                var componentConstructorFn = lastNamespaceObject[getComponentName(dataRayComponentAttrValue)];
                 if (componentConstructorFn === undefined) {
                     return;
                 }
-                var component = new Component(componentConstructorFn, data);
-                component.execute();
 
-                componentsExecuted.push(dataRayComponentAttrValue);
-                domElement.setAttribute(Component.DATA_RAY_EXECUTED_ATTR, componentsExecuted.join(','));
+                try {
+                    new Component(componentConstructorFn, data).execute();
+                } catch (e) {
+                    addToAttrList(Component.DATA_RAY_FAILED_ATTR, dataRayComponentAttrValue);
+                    if (onError) {
+                        onError(e);
+                    } else {
+                        errors.push(e);
+                    }
+                    return;
+                }
+
+                addToAttrList(Component.DATA_RAY_EXECUTED_ATTR, dataRayComponentAttrValue);
             });
+
+            if (errors.length > 0) {
+                throw errors[0];
+            }
+        }
+    }, {
+        key: "_getData",
+        value: function _getData(domElement, bus) {
+            var cached = componentDataCache.get(domElement);
+            if (cached !== undefined) {
+                if (cached.bus === bus) {
+                    return cached;
+                }
+                var _data = RayNS.ComponentData.create(domElement, bus, cached.params);
+                componentDataCache.set(domElement, _data);
+                return _data;
+            }
+            var data = RayNS.ComponentData.create(domElement, bus);
+            componentDataCache.set(domElement, data);
+            return data;
         }
     }, {
         key: "DATA_RAY_ATTR",
@@ -297,6 +361,11 @@ var Component = function () {
         key: "DATA_RAY_EXECUTED_ATTR",
         get: function get() {
             return "data-ray-component-executed";
+        }
+    }, {
+        key: "DATA_RAY_FAILED_ATTR",
+        get: function get() {
+            return "data-ray-component-failed";
         }
     }]);
 
@@ -329,7 +398,7 @@ var CommandDispatcher = function () {
                 self._executeNewComponents();
             });
             this.listenerToCatchError = this.bus.on(Events.ERROR, function (e) {
-                console.error("RayJS Error: " + e.stack);
+                console.error("RayJS Error: " + (e && e.stack ? e.stack : e));
             });
         }
     }, {
@@ -343,9 +412,12 @@ var CommandDispatcher = function () {
         value: function _executeNewComponents() {
             var DATA_RAY_ATTR = RayNS.Component.DATA_RAY_ATTR;
             var self = this;
+            var reportError = function reportError(e) {
+                self.bus.trigger(Events.ERROR, e);
+            };
             return document.querySelectorAll("[" + DATA_RAY_ATTR + "]").forEach(function (domElement) {
                 try {
-                    Component.execute(domElement, self.bus);
+                    Component.execute(domElement, self.bus, reportError);
                 } catch (e) {
                     self.bus.trigger(Events.ERROR, e);
                 }
@@ -415,9 +487,8 @@ var Bus = function () {
             if (!this.topics[topic]) {
                 return false;
             }
-            var self = this;
-            var subscribers = self.topics[topic];
-            if (!subscribers) return;
+            // Copy: a callback may unsubscribe (off) while the list is being iterated
+            var subscribers = this.topics[topic].slice();
             subscribers.forEach(function (suscriber) {
                 suscriber.callback(args);
             });
@@ -497,4 +568,7 @@ var Ray = function () {
 }();
 
 window.Ray = Ray;
-module.exports = Ray;
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = Ray;
+}
+})();
